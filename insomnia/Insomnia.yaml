@@ -1,0 +1,2314 @@
+_type: export
+__export_format: 4
+__export_date: 2024-02-13T23:14:03.077Z
+__export_source: insomnia.desktop.app:v8.6.1
+resources:
+  - _id: req_8119e08edcd147199a54110ad5c25afa
+    parentId: fld_f2e60baae06b4cf4a8bedd846a1f9a6e
+    modified: 1702474872311
+    created: 1702076890183
+    url: "{{MANAGEMENT_URL}}/v3/assets"
+    name: Create Asset 1
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+          "@context": {},
+          "properties": {
+            "id": "1",
+            "description": "Product EDC Demo Asset 1"
+          },
+          "dataAddress": {
+            "@type": "DataAddress",
+            "type": "HttpData",
+            "baseUrl": "https://jsonplaceholder.typicode.com/todos/1",
+            "proxyPath": "true",
+            "proxyQueryParams": "true"
+          }
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702076890290
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_f2e60baae06b4cf4a8bedd846a1f9a6e
+    parentId: fld_654b4d412f0a4340b9074571e886ce1b
+    modified: 1702077511414
+    created: 1702076890182
+    name: SeedData
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1702076907492
+    _type: request_group
+  - _id: fld_654b4d412f0a4340b9074571e886ce1b
+    parentId: wrk_scratchpad
+    modified: 1707865452218
+    created: 1702076145857
+    name: Tractus-X MXD
+    description: ""
+    environment: {}
+    environmentPropertyOrder: {}
+    metaSortKey: -1692633304346
+    _type: request_group
+  - _id: wrk_scratchpad
+    parentId: null
+    modified: 1697404105955
+    created: 1697404105955
+    name: Scratch Pad
+    description: ""
+    scope: collection
+    _type: workspace
+  - _id: req_2c079546d95545d382438b3dee726a6c
+    parentId: fld_f2e60baae06b4cf4a8bedd846a1f9a6e
+    modified: 1702077022512
+    created: 1702076890185
+    url: "{{MANAGEMENT_URL}}/v3/assets"
+    name: Create Asset 2
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+          "@context": {},
+          "properties": {
+            "id": "2",
+            "description": "Product EDC Demo Asset 2"
+          },
+          "dataAddress": {
+            "@type": "DataAddress",
+            "type": "HttpData",
+            "baseUrl": "https://jsonplaceholder.typicode.com/todos/2",
+            "proxyPath": "true",
+            "proxyQueryParams": "true"
+          }
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702076890240
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_81ff8c4c817f4ec58ac10da9d9c1c3a1
+    parentId: fld_f2e60baae06b4cf4a8bedd846a1f9a6e
+    modified: 1702077025002
+    created: 1702076890187
+    url: "{{MANAGEMENT_URL}}/v2/policydefinitions"
+    name: Create Policy
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "@context": {
+                "odrl": "http://www.w3.org/ns/odrl/2/"
+            },
+            "@type": "PolicyDefinitionRequestDto",
+            "@id": "1",
+            "policy": {
+        		"@type": "Policy",
+        		"odrl:permission" : [{
+        			"odrl:action" : "USE",
+        			"odrl:constraint" : {
+        				"@type": "LogicalConstraint",
+        				"odrl:or" : [{
+        					"@type" : "Constraint",
+        					"odrl:leftOperand" : "BusinessPartnerNumber",
+        					"odrl:operator" : {
+                                "@id": "odrl:eq"
+                            },
+        					"odrl:rightOperand" : "{{POLICY_BPN}}"
+        				}]
+        			}
+        		}]
+            }
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702076890215
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_5ceffa9d42de4b63a94d855a99cbabbd
+    parentId: fld_f2e60baae06b4cf4a8bedd846a1f9a6e
+    modified: 1702077031682
+    created: 1702076890188
+    url: "{{MANAGEMENT_URL}}/v2/contractdefinitions"
+    name: Create Contract Definition 1
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "@context": {},
+            "@id": "1",
+            "@type": "ContractDefinition",
+            "accessPolicyId": "1",
+            "contractPolicyId": "1",
+            "assetsSelector" : {
+                "@type" : "CriterionDto",
+                "operandLeft": "{{EDC_NAMESPACE}}id",
+                "operator": "=",
+                "operandRight": "1"
+            }
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702076890202.5
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_8d503ec55eb1409a9b922a28ede60b3e
+    parentId: fld_f2e60baae06b4cf4a8bedd846a1f9a6e
+    modified: 1702076890190
+    created: 1702076890190
+    url: "{{MANAGEMENT_URL}}/v2/contractdefinitions"
+    name: Create Contract Definition 2
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "@context": {},
+            "@id": "2",
+            "@type": "ContractDefinition",
+            "accessPolicyId": "1",
+            "contractPolicyId": "1",
+            "assetsSelector" : {
+                "@type" : "CriterionDto",
+                "operandLeft": "{{EDC_NAMESPACE}}id",
+                "operator": "=",
+                "operandRight": "2"
+            }
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702076890190
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_7d5833cdc63a4e9ca6b9aa9faa1763d4
+    parentId: fld_a016c102149546a79fb0bf1154b9fe70
+    modified: 1702077061949
+    created: 1702076890194
+    url: "{{KEYCLOAK_URL}}/protocol/openid-connect/token"
+    name: Get Access Token  Keycloak
+    description: ""
+    method: POST
+    body:
+      params:
+        - value: "{{MIW_CLIENT_ID}}"
+          name: client_id
+          disabled: false
+        - value: client_credentials
+          name: grant_type
+          disabled: false
+        - value: "{{MIW_CLIENT_SECRET}}"
+          name: client_secret
+          disabled: false
+        - value: openid
+          name: scope
+          disabled: false
+      mimeType: application/x-www-form-urlencoded
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702076890299
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_a016c102149546a79fb0bf1154b9fe70
+    parentId: fld_654b4d412f0a4340b9074571e886ce1b
+    modified: 1702077506954
+    created: 1702076890193
+    name: SeedMIW
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1702076907392
+    _type: request_group
+  - _id: req_3b08f1f0b2264d1b938e5be46894f3f8
+    parentId: fld_a016c102149546a79fb0bf1154b9fe70
+    modified: 1702077063440
+    created: 1702076890196
+    url: "{{MIW_URL}}/api/wallets"
+    name: Create Alice wallet
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "name": "Alice-Wallet",
+            "bpn": "{{ALICE_BPN}}"
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702076890249
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_abf240c663474f1e99e3fad886e6be11
+    parentId: fld_a016c102149546a79fb0bf1154b9fe70
+    modified: 1702077065118
+    created: 1702076890197
+    url: "{{MIW_URL}}/api/wallets"
+    name: Create Bob wallet
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "name": "Bob-Wallet",
+            "bpn": "{{BOB_BPN}}"
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702076890224
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_fa0fb4792b964b319bb468a4c0c057b4
+    parentId: fld_a016c102149546a79fb0bf1154b9fe70
+    modified: 1702076890199
+    created: 1702076890199
+    url: "{{MIW_URL}}/api/wallets"
+    name: Create Trudy wallet
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "name": "Trudy-Wallet",
+            "bpn": "{{TRUDY_BPN}}"
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702076890199
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_4c475371ccef411980da7a5a0ef9c2e2
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077225882
+    created: 1702077182706
+    url: "{{PROVIDER_MANAGEMENT_URL}}/v3/assets"
+    name: Create Asset
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "@context": {},
+            "@id": "{{ASSET_ID}}", 
+            "properties": {
+                "description": "Product EDC Demo Asset"
+            },
+            "dataAddress": {
+                "@type": "DataAddress",
+                "type": "HttpData",
+                "baseUrl": "https://jsonplaceholder.typicode.com/todos"
+            }
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182838
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_3fe61197784e4943a4a4491bb20a5452
+    parentId: fld_654b4d412f0a4340b9074571e886ce1b
+    modified: 1702475698697
+    created: 1702077182704
+    name: tractusx-edc-mgmt-api
+    description: ""
+    environment:
+      CONSUMER_MANAGEMENT_URL: http://localhost/bob/management
+      PROVIDER_PROTOCOL_URL: http://alice-controlplane:8084/api/v1/dsp
+      PROVIDER_MANAGEMENT_URL: http://localhost/alice/management
+      ASSET_ID: "1"
+      POLICY_ID: "1"
+      CONTRACT_POLICY_ID: "1"
+      ACCESS_POLICY_ID: "1"
+      CONTRACT_DEFINITION_ID: "1"
+      POLICY_BPN: BPNL000000000002
+      NEGOTIATION_ID: ""
+      AGREEMENT_ID: ""
+      TRANSFER_ID: ""
+      TRANSFER_PROCESS_ID: ""
+      BACKEND_SERVICE: http://backend:8080
+      AGREEMENT-ID: ""
+      authCode: ""
+      PROVIDER_ID: BPNL000000000001
+      EDC_NAMESPACE: https://w3id.org/edc/v0.0.1/ns/
+      CONSUMER_PROXY_URL: http://localhost/bob/proxy
+      PROVIDER_PUBLIC_URL: http://localhost/alice/api/public
+    environmentPropertyOrder:
+      "&":
+        - CONSUMER_MANAGEMENT_URL
+        - PROVIDER_PROTOCOL_URL
+        - PROVIDER_MANAGEMENT_URL
+        - ASSET_ID
+        - POLICY_ID
+        - CONTRACT_POLICY_ID
+        - ACCESS_POLICY_ID
+        - CONTRACT_DEFINITION_ID
+        - POLICY_BPN
+        - NEGOTIATION_ID
+        - AGREEMENT_ID
+        - TRANSFER_ID
+        - TRANSFER_PROCESS_ID
+        - BACKEND_SERVICE
+        - AGREEMENT-ID
+        - authCode
+        - PROVIDER_ID
+        - EDC_NAMESPACE
+        - CONSUMER_PROXY_URL
+        - PROVIDER_PUBLIC_URL
+    metaSortKey: -1702076907292
+    _type: request_group
+  - _id: req_4a8f34160dc44d65880b53c8a56a8012
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077233617
+    created: 1702077182707
+    url: "{{PROVIDER_MANAGEMENT_URL}}/v3/assets/request"
+    name: Get all Assets
+    description: ""
+    method: POST
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182788
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_eff0b6f726e344b2aa6650446dc18c2a
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077236752
+    created: 1702077182708
+    url: "{{PROVIDER_MANAGEMENT_URL}}/v3/assets/{{ASSET_ID}}"
+    name: Get Asset by ID
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182763
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_5a962790ffec46d8b1f54539e560fa0b
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077239802
+    created: 1702077182709
+    url: "{{PROVIDER_MANAGEMENT_URL}}/v3/assets/{{ASSET_ID}}"
+    name: Delete Asset by ID
+    description: ""
+    method: DELETE
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182750.5
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_d498a3a8fd084e399b7e844ed6af1e48
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077242404
+    created: 1702077182711
+    url: "{{PROVIDER_MANAGEMENT_URL}}/v2/policydefinitions"
+    name: Create Policy
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "@context": {
+                "odrl": "http://www.w3.org/ns/odrl/2/"
+            },
+            "@type": "PolicyDefinitionRequestDto",
+            "@id": "{{POLICY_ID}}",
+            "policy": {
+        		"@type": "Policy",
+        		"odrl:permission" : [{
+        			"odrl:action" : "USE",
+        			"odrl:constraint" : {
+        				"@type": "LogicalConstraint",
+        				"odrl:or" : [{
+        					"@type" : "Constraint",
+        					"odrl:leftOperand" : "BusinessPartnerNumber",
+        					"odrl:operator" : {
+                                "@id": "odrl:eq"
+                            },
+        					"odrl:rightOperand" : "{{POLICY_BPN}}"
+        				}]
+        			}
+        		}]
+            }
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182744.25
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_6931b5e681714b9caa27f321b3c70e3f
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077245451
+    created: 1702077182713
+    url: "{{PROVIDER_MANAGEMENT_URL}}/v2/policydefinitions/{{POLICY_ID}}"
+    name: Get Policy by ID
+    description: ""
+    method: GET
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "id": "{{POLICY_ID}}",
+            "policy": {
+                "prohibitions": [],
+                "obligations": [],
+                "permissions": [
+                    {
+                        "edctype": "dataspaceconnector:permission",
+                        "action": {
+                            "type": "USE"
+                        },
+                        "constraints": []
+                    }
+                ]
+            }
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182741.125
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_ef84ebac8ada4baa9ab1278e5bd880aa
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077248130
+    created: 1702077182713
+    url: "{{PROVIDER_MANAGEMENT_URL}}/v2/policydefinitions/request"
+    name: Get all Policies
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "@context": {
+                "odrl": "http://www.w3.org/ns/odrl/2/"
+            },
+            "id": "{{POLICY_ID}}",
+            "policy": {
+                "prohibitions": [],
+                "obligations": [],
+                "permissions": [
+                    {
+                        "edctype": "dataspaceconnector:permission",
+                        "action": {
+                            "type": "USE"
+                        },
+                        "constraints": []
+                    }
+                ]
+            }
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182739.5625
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_2180720083b245129cdbb252f5c3fce3
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077250571
+    created: 1702077182714
+    url: "{{PROVIDER_MANAGEMENT_URL}}/v2/policydefinitions/{{POLICY_ID}}"
+    name: Delte Policy by ID
+    description: ""
+    method: DELETE
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "id": "{{POLICY_ID}}",
+            "policy": {
+                "prohibitions": [],
+                "obligations": [],
+                "permissions": [
+                    {
+                        "edctype": "dataspaceconnector:permission",
+                        "action": {
+                            "type": "USE"
+                        },
+                        "constraints": []
+                    }
+                ]
+            }
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182738.7812
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_bcfeda14b28e47d187652e32bf99dc4c
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077255143
+    created: 1702077182715
+    url: "{{PROVIDER_MANAGEMENT_URL}}/v2/contractdefinitions"
+    name: Create Contract Definitiion
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "@context": {},
+            "@id": "{{CONTRACT_DEFINITION_ID}}",
+            "@type": "ContractDefinition",
+            "accessPolicyId": "{{ACCESS_POLICY_ID}}",
+            "contractPolicyId": "{{CONTRACT_POLICY_ID}}",
+            "assetsSelector" : {
+                "@type" : "CriterionDto",
+                "operandLeft": "{{EDC_NAMESPACE}}id",
+                "operator": "=",
+                "operandRight": "{{ASSET_ID}}"
+            }
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182738.3906
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_41c0ff026fd04a298f94118a3b0c4cb1
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077258356
+    created: 1702077182717
+    url: "{{PROVIDER_MANAGEMENT_URL}}/v2/contractdefinitions/{{CONTRACT_DEFINITION_\
+      ID}}"
+    name: Get Contract Definition by ID
+    description: ""
+    method: GET
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "id": "{{POLICY_ID}}",
+            "policy": {
+                "prohibitions": [],
+                "obligations": [],
+                "permissions": [
+                    {
+                        "edctype": "dataspaceconnector:permission",
+                        "action": {
+                            "type": "USE"
+                        },
+                        "constraints": []
+                    }
+                ]
+            }
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182738.1953
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_d616d79d67c94adeb25df967cc06eae4
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077261149
+    created: 1702077182719
+    url: "{{PROVIDER_MANAGEMENT_URL}}/v2/contractdefinitions/request"
+    name: Get all Contract Definitiions
+    description: ""
+    method: POST
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182738.0977
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_f7b3dbcc784f46479883ab11170f1fa9
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077263728
+    created: 1702077182719
+    url: "{{PROVIDER_MANAGEMENT_URL}}/v2/contractdefinitions/{{CONTRACT_DEFINITION_\
+      ID}}"
+    name: Delte Contract Definition
+    description: ""
+    method: DELETE
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "id": "{{POLICY_ID}}",
+            "policy": {
+                "prohibitions": [],
+                "obligations": [],
+                "permissions": [
+                    {
+                        "edctype": "dataspaceconnector:permission",
+                        "action": {
+                            "type": "USE"
+                        },
+                        "constraints": []
+                    }
+                ]
+            }
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182738.0488
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_248abb6327be4b379a84a14275ee74a0
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077267160
+    created: 1702077182720
+    url: "{{CONSUMER_MANAGEMENT_URL}}/v2/catalog/request"
+    name: Query Catalog
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: "{\r
+
+        \    \"@context\": {\r
+
+        \        \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\r
+
+        \    },\r
+
+        \    \"@type\": \"CatalogRequest\",\r
+
+        \    \"counterPartyAddress\":\"{{PROVIDER_PROTOCOL_URL}}\",\r
+
+        \    \"protocol\": \"dataspace-protocol-http\",\r
+
+        \    \"querySpec\": {\r
+
+        \        \"offset\": 0,\r
+
+        \        \"limit\": 50\r
+
+        \    }\r
+
+        }"
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182738.0244
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_ab36549411c9427da393e40561e7decb
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077269884
+    created: 1702077182721
+    url: "{{CONSUMER_MANAGEMENT_URL}}/v2/contractnegotiations"
+    name: Initiate Negotation
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: >-
+        {
+        	"@context": {
+        		"odrl": "http://www.w3.org/ns/odrl/2/"
+        	},
+        	"@type": "NegotiationInitiateRequestDto",
+        	"connectorAddress": "{{PROVIDER_PROTOCOL_URL}}",
+        	"protocol": "dataspace-protocol-http",
+        	"connectorId": "{{PROVIDER_ID}}",
+        	"providerId": "{{PROVIDER_ID}}",
+        	"offer": {
+        		"offerId": "MQ==:MQ==:ZDM4Nzk3NmUtZjA0Ny00ZmNjLWFhNWItYjQwYmVkMDBhZGYy",
+        		"assetId": "{{ASSET_ID}}",
+        		"policy": {
+        			"@type": "odrl:Set",
+        			"odrl:permission": {
+        				"odrl:target": "{{ASSET_ID}}",
+        				"odrl:action": {
+        					"odrl:type": "USE"
+        				},
+        				"odrl:constraint": {
+        					"odrl:or": {
+        						"odrl:leftOperand": "BusinessPartnerNumber",
+        						"odrl:operator": {
+                                    "@id": "odrl:eq"
+                                },
+        						"odrl:rightOperand": "{{POLICY_BPN}}"
+        					}
+        				}
+        			},
+        			"odrl:prohibition": [],
+        			"odrl:obligation": [],
+        			"odrl:target": "{{ASSET_ID}}"
+        		}
+        	}
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182738.0122
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_11fc84d5e868472c97d30914fa370efa
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077272294
+    created: 1702077182724
+    url: "{{CONSUMER_MANAGEMENT_URL}}/v2/contractnegotiations/request"
+    name: Get all Negotations
+    description: ""
+    method: POST
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182738.006
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_8b57642cefc04717adb38341ea731109
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077274836
+    created: 1702077182725
+    url: "{{CONSUMER_MANAGEMENT_URL}}/v2/contractnegotiations/7cff6ecb-7e5e-40b8-b1\
+      01-eba3f2045b1f/cancel"
+    name: Cancel Negotation by ID
+    description: ""
+    method: POST
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182738.003
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_7722ab32bdb04713a85a4b0f16878e72
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077277542
+    created: 1702077182727
+    url: "{{CONSUMER_MANAGEMENT_URL}}/v2/transferprocesses"
+    name: Initiate Transfer
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "@context": {
+                "odrl": "http://www.w3.org/ns/odrl/2/"
+            },
+            "assetId": "{{ASSET_ID}}",
+            "connectorAddress": "{{PROVIDER_PROTOCOL_URL}}",
+            "connectorId": "{{PROVIDER_ID}}",
+            "contractId": "<contractAgreementId>",
+            "dataDestination": {
+                "type": "HttpProxy"
+            },
+            "privateProperties": {
+                "receiverHttpEndpoint": "{{BACKEND_SERVICE}}"
+            },
+            "protocol": "dataspace-protocol-http",
+            "transferType": {
+                "contentType": "application/octet-stream",
+                "isFinite": true
+            }
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182738.0015
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_ee09e89eabb7431796cc4d81183bb436
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077280090
+    created: 1702077182728
+    url: "{{CONSUMER_MANAGEMENT_URL}}/v2/transferprocesses/8e428b80-46a5-4325-87e5-\
+      592518f7666b"
+    name: Get Transfer by ID
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182738.0007
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_cf749b0ed672480ca362d84d38795e4b
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077282811
+    created: 1702077182730
+    url: "{{CONSUMER_MANAGEMENT_URL}}/v2/transferprocesses/request"
+    name: Get all Transfers
+    description: ""
+    method: POST
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182738.0005
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_cbeeda5425024c9980f7150c08e6f825
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077285321
+    created: 1702077182731
+    url: "{{CONSUMER_MANAGEMENT_URL}}/edrs"
+    name: Initiate EDR Negotation
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: >-
+        {
+        	"@context": {
+        		"odrl": "http://www.w3.org/ns/odrl/2/"
+        	},
+        	"@type": "NegotiationInitiateRequestDto",
+        	"connectorAddress": "{{PROVIDER_PROTOCOL_URL}}",
+        	"protocol": "dataspace-protocol-http",
+        	"connectorId": "{{PROVIDER_ID}}",
+        	"providerId": "{{PROVIDER_ID}}",
+        	"offer": {
+        		"offerId": "MQ==:MQ==:ZDM4Nzk3NmUtZjA0Ny00ZmNjLWFhNWItYjQwYmVkMDBhZGYy",
+        		"assetId": "{{ASSET_ID}}",
+        		"policy": {
+        			"@type": "odrl:Set",
+        			"odrl:permission": {
+        				"odrl:target": "{{ASSET_ID}}",
+        				"odrl:action": {
+        					"odrl:type": "USE"
+        				},
+        				"odrl:constraint": {
+        					"odrl:or": {
+        						"odrl:leftOperand": "BusinessPartnerNumber",
+        						"odrl:operator": {
+                                    "@id": "odrl:eq"
+                                },
+        						"odrl:rightOperand": "{{POLICY_BPN}}"
+        					}
+        				}
+        			},
+        			"odrl:prohibition": [],
+        			"odrl:obligation": [],
+        			"odrl:target": "{{ASSET_ID}}"
+        		}
+        	}
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182738.0002
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_96d65423c1514cc68a266f106396b6c6
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702474996484
+    created: 1702077182738
+    url: "{{PROVIDER_PUBLIC_URL}}"
+    name: Get Data with provider dataplane
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182738
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_02455f7c96264d4396794503a1a833d7
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077288374
+    created: 1702077182732
+    url: "{{CONSUMER_MANAGEMENT_URL}}/edrs"
+    name: Query EDRs Cached
+    description: ""
+    method: GET
+    body: {}
+    parameters:
+      - name: assetId
+        value: "{{ASSET_ID}}"
+        disabled: false
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182738
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_07e1d6623a104a4ea35716a2bf59e500
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077291463
+    created: 1702077182733
+    url: "{{CONSUMER_MANAGEMENT_URL}}/edrs/e1e986be-3ac3-4166-8fa9-b44be00a37ba"
+    name: Get EDR by tp ID
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182737.5
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_d7aabb4c5ed9415fa107c17595fa73c4
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077293681
+    created: 1702077182734
+    url: "{{CONSUMER_MANAGEMENT_URL}}/edrs/eb97391e-b30d-4da8-a5ff-8f865ac1d622"
+    name: Del EDR by tp ID
+    description: ""
+    method: DELETE
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182737.25
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_d977e98f9d6d4ae381f7e0ea8737627e
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077296054
+    created: 1702077182735
+    url: "{{CONSUMER_PROXY_URL}}/aas/request"
+    name: Get Data with proxy
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "assetId": "{{ASSET_ID}}",
+            "providerId": "{{PROVIDER_ID}}"
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182737.125
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_afedd9cb20c141e6a1e8fac8d597631f
+    parentId: fld_3fe61197784e4943a4a4491bb20a5452
+    modified: 1702077182737
+    created: 1702077182737
+    url: "{{CONSUMER_PROXY_URL}}/aas/request"
+    name: Get Data with proxy  (PathSegments)
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "assetId": "{{ASSET_ID}}",
+            "providerId": "{{PROVIDER_ID}}",
+            "pathSegments": "/1"
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077182737
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_9621abf66ef84a9e95380d1a59512bea
+    parentId: fld_32e9e9b66a9347129f381b0568b35eed
+    modified: 1702077542718
+    created: 1702077416535
+    url: "{{BOB_MANAGEMENT_URL}}/v3/assets"
+    name: Create Assets BOB Management
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+          "@context": {},
+          "properties": {
+            "id": "2222",
+            "description": "Product EDC Demo Asset 1"
+          },
+          "dataAddress": {
+            "@type": "DataAddress",
+            "type": "HttpData",
+            "baseUrl": "https://jsonplaceholder.typicode.com/todos"
+          }
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077416646
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_32e9e9b66a9347129f381b0568b35eed
+    parentId: fld_654b4d412f0a4340b9074571e886ce1b
+    modified: 1702077428933
+    created: 1702077416533
+    name: Management API Tests
+    description: ""
+    environment:
+      ASSET_ID: "1"
+      POLICY_ID: "1"
+      CONTRACT_POLICY_ID: "1"
+      ACCESS_POLICY_ID: "1"
+      CONTRACT_DEFINITION_ID: "1"
+      POLICY_BPN: BPNBOB
+      BACKEND_SERVICE: http://backend:8080
+      PROVIDER_ID: BPNPLATO
+      EDC_NAMESPACE: https://w3id.org/edc/v0.0.1/ns/
+      CONSUMER_ADAPTER_URL: http://localhost:31364/management
+      BOB_MANAGEMENT_URL: http://localhost/bob/management
+      Alice_MANAGEMENT_URL: http://localhost/alice/management
+      BOB_PROVIDER_PROTOCOL_URL: http://bob-controlplane:8084/api/v1/dsp
+      Alice_PROVIDER_PROTOCOL_URL: http://alice-controlplane:8084/api/v1/dsp
+    environmentPropertyOrder: null
+    metaSortKey: -1702076907192
+    _type: request_group
+  - _id: req_b88f7d052aa640aba8e63f6bc086c91f
+    parentId: fld_32e9e9b66a9347129f381b0568b35eed
+    modified: 1702077544638
+    created: 1702077416536
+    url: "{{Alice_MANAGEMENT_URL}}/v3/assets"
+    name: Create Asset Alice MANAGEMENT
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+          "@context": {},
+          "properties": {
+            "id": "2222",
+            "description": "Product EDC Demo Asset 2"
+          },
+          "dataAddress": {
+            "@type": "DataAddress",
+            "type": "HttpData",
+            "baseUrl": "https://jsonplaceholder.typicode.com/todos"
+          }
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077416596
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_b33702eec2a1444992b08dd55a8f10e8
+    parentId: fld_32e9e9b66a9347129f381b0568b35eed
+    modified: 1702077546744
+    created: 1702077416537
+    url: "{{BOB_MANAGEMENT_URL}}/v2/policydefinitions"
+    name: Create Policy BOB_MANAGEMENT_URL
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "@context": {
+                "odrl": "http://www.w3.org/ns/odrl/2/"
+            },
+            "@type": "PolicyDefinitionRequestDto",
+            "@id": "2222",
+            "policy": {
+        		"@type": "Policy",
+        		"odrl:permission" : [{
+        			"odrl:action" : "USE",
+        			"odrl:constraint" : {
+        				"@type": "LogicalConstraint",
+        				"odrl:or" : [{
+        					"@type" : "Constraint",
+        					"odrl:leftOperand" : "BusinessPartnerNumber",
+        					"odrl:operator" : {
+                                "@id": "odrl:eq"
+                            },
+        					"odrl:rightOperand" : "{{POLICY_BPN}}"
+        				}]
+        			}
+        		}]
+            }
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077416571
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_bd074bafef7549a4a6ce655acc9ea35c
+    parentId: fld_32e9e9b66a9347129f381b0568b35eed
+    modified: 1702077548888
+    created: 1702077416538
+    url: "{{Alice_MANAGEMENT_URL}}/v2/policydefinitions"
+    name: Create Policy Alice_MANAGEMENT_URL
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "@context": {
+                "odrl": "http://www.w3.org/ns/odrl/2/"
+            },
+            "@type": "PolicyDefinitionRequestDto",
+            "@id": "2222",
+            "policy": {
+        		"@type": "Policy",
+        		"odrl:permission" : [{
+        			"odrl:action" : "USE",
+        			"odrl:constraint" : {
+        				"@type": "LogicalConstraint",
+        				"odrl:or" : [{
+        					"@type" : "Constraint",
+        					"odrl:leftOperand" : "BusinessPartnerNumber",
+        					"odrl:operator" : {
+                                "@id": "odrl:eq"
+                            },
+        					"odrl:rightOperand" : "{{POLICY_BPN}}"
+        				}]
+        			}
+        		}]
+            }
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077416558.5
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_ea56849ea9a84253b7db43dd96bc0838
+    parentId: fld_32e9e9b66a9347129f381b0568b35eed
+    modified: 1702077551095
+    created: 1702077416539
+    url: "{{BOB_MANAGEMENT_URL}}/v2/contractdefinitions"
+    name: Create Contract Definition BOB_MANAGEMENT_URL
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "@context": {},
+            "@id": "2222",
+            "@type": "ContractDefinition",
+            "accessPolicyId": "1",
+            "contractPolicyId": "1",
+            "assetsSelector" : {
+                "@type" : "CriterionDto",
+                "operandLeft": "{{EDC_NAMESPACE}}id",
+                "operator": "=",
+                "operandRight": "1"
+            }
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077416552.25
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_fb898399631f440ebd882a5e5f5256a9
+    parentId: fld_32e9e9b66a9347129f381b0568b35eed
+    modified: 1702077552717
+    created: 1702077416541
+    url: "{{Alice_MANAGEMENT_URL}}/v2/contractdefinitions"
+    name: Create Contract Definition Alice_MANAGEMENT_URL
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "@context": {},
+            "@id": "2222",
+            "@type": "ContractDefinition",
+            "accessPolicyId": "1",
+            "contractPolicyId": "1",
+            "assetsSelector" : {
+                "@type" : "CriterionDto",
+                "operandLeft": "{{EDC_NAMESPACE}}id",
+                "operator": "=",
+                "operandRight": "1"
+            }
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077416549.125
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_1434ce7f27fc4f389605114bea019f95
+    parentId: fld_32e9e9b66a9347129f381b0568b35eed
+    modified: 1702077622934
+    created: 1702077416542
+    url: "{{BOB_MANAGEMENT_URL}}/v2/policydefinitions/request"
+    name: Get all Policies
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "@context": {
+                "odrl": "http://www.w3.org/ns/odrl/2/"
+            },
+            "id": "{{POLICY_ID}}",
+            "policy": {
+                "prohibitions": [],
+                "obligations": [],
+                "permissions": [
+                    {
+                        "edctype": "dataspaceconnector:permission",
+                        "action": {
+                            "type": "USE"
+                        },
+                        "constraints": []
+                    }
+                ]
+            }
+        }
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077416548.7344
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_f3ae50f223c146b9ba89aabe1a45d707
+    parentId: fld_32e9e9b66a9347129f381b0568b35eed
+    modified: 1702077560884
+    created: 1702077416543
+    url: "{{BOB_MANAGEMENT_URL}}/v3/assets/request"
+    name: Get all Assets
+    description: ""
+    method: POST
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1702077416548.3438
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_cfb0ff075f1446ca8d730fecbf010a40
+    parentId: fld_32e9e9b66a9347129f381b0568b35eed
+    modified: 1702077558659
+    created: 1702077416545
+    url: "{{BOB_MANAGEMENT_URL}}/v2/catalog/request"
+    name: Query Catalog Bob to Alice
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: "{\r
+
+        \    \"@context\": {\r
+
+        \        \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\r
+
+        \    },\r
+
+        \    \"@type\": \"CatalogRequest\",\r
+
+        \    \"providerUrl\": \"\",\r
+
+        \    \"counterPartyAddress\":\"{{Alice_PROVIDER_PROTOCOL_URL}}\
+        \",\r
+
+        \    \"protocol\": \"dataspace-protocol-http\",\r
+
+        \    \"querySpec\": {\r
+
+        \        \"offset\": 0,\r
+
+        \        \"limit\": 50\r
+
+        \    }\r
+
+        }"
+    parameters: []
+    headers:
+      - name: X-Api-Key
+        value: password
+    authentication: {}
+    metaSortKey: -1702077416546.3906
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_770f9ad6c5734bf3965712fb64df35ea
+    parentId: fld_32e9e9b66a9347129f381b0568b35eed
+    modified: 1702077416546
+    created: 1702077416546
+    url: "{{BOB_MANAGEMENT_URL}}/v2/catalog/request"
+    name: Query Catalog Alice to BOB
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: "{\r
+
+        \    \"@context\": {\r
+
+        \        \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\r
+
+        \    },\r
+
+        \    \"@type\": \"CatalogRequest\",\r
+
+        \    \"providerUrl\": \"\",\r
+
+        \    \"counterPartyAddress\":\"{{Alice_PROVIDER_PROTOCOL_URL}}\
+        \",\r
+
+        \    \"protocol\": \"dataspace-protocol-http\",\r
+
+        \    \"querySpec\": {\r
+
+        \        \"offset\": 0,\r
+
+        \        \"limit\": 50\r
+
+        \    }\r
+
+        }"
+    parameters: []
+    headers:
+      - name: X-Api-Key
+        value: password
+    authentication: {}
+    metaSortKey: -1702077416546
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_b3f9eb6c158e4f3287d86c39c5ea2a19
+    parentId: fld_c7511cda01fb432e950335aee9df3228
+    modified: 1707865505527
+    created: 1692633532261
+    url: https://<lb-domain>/alice/health/api/check/liveness
+    name: Alice Liveness
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: Insomnia/2023.5.5
+    authentication: {}
+    metaSortKey: -1697497986591
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_c7511cda01fb432e950335aee9df3228
+    parentId: fld_da0f8b64d8024eaea0c26a05421ca40f
+    modified: 1707865459344
+    created: 1697497979617
+    name: Alice
+    description: ""
+    environment: {}
+    environmentPropertyOrder: {}
+    metaSortKey: -1697497979617
+    _type: request_group
+  - _id: fld_da0f8b64d8024eaea0c26a05421ca40f
+    parentId: wrk_scratchpad
+    modified: 1707865405238
+    created: 1697497166471
+    name: MVD for Catena-X on AWS
+    description: ""
+    environment:
+      CONSUMER_MANAGEMENT_URL: https://<lb-domain>/bob/management
+      PROVIDER_PROTOCOL_URL: http://alice-controlplane:8084/api/v1/dsp
+      PROVIDER_MANAGEMENT_URL: https://<lb-domain>/alice/management
+      PROVIDER_ID: BPNL000000000001
+      POLICY_BPN: BPNL000000000002
+      EDC_NAMESPACE: https://w3id.org/edc/v0.0.1/ns/
+      POLICY_ID: "1"
+    environmentPropertyOrder:
+      "&":
+        - CONSUMER_MANAGEMENT_URL
+        - PROVIDER_PROTOCOL_URL
+        - PROVIDER_MANAGEMENT_URL
+        - PROVIDER_ID
+        - POLICY_BPN
+        - EDC_NAMESPACE
+        - POLICY_ID
+    metaSortKey: -1692633304296
+    _type: request_group
+  - _id: req_d872fc7612224fa5b0a708acf099aec2
+    parentId: fld_c7511cda01fb432e950335aee9df3228
+    modified: 1707865617151
+    created: 1695247125515
+    url: "{{PROVIDER_MANAGEMENT_URL}}/v3/assets"
+    name: Create Asset S3
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |
+        {
+          "@context": {
+            "edc": "https://w3id.org/edc/v0.0.1/ns/"
+          },
+          "@id": "3",
+          "properties": {
+            "description": "Amazon S3 Demo Asset"
+          },
+          "dataAddress": {
+            "type": "AmazonS3",
+            "keyName": "provider/example.json",
+        		"region": "eu-central-1",
+        		"bucketName": "mvd-for-catenax"
+          }
+        }
+    parameters: []
+    headers:
+      - id: pair_2ec5599decff441e95a2a1523de7cc11
+        name: x-api-key
+        value: password
+        description: ""
+      - id: pair_9d77561685a647dd890b6beb1ab9ef2a
+        name: content-type
+        value: application/json
+        description: ""
+    authentication: {}
+    metaSortKey: -1697497986491
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_5554ec2395b24e389c43f33b06d01127
+    parentId: fld_c7511cda01fb432e950335aee9df3228
+    modified: 1701047686350
+    created: 1692633811785
+    url: "{{PROVIDER_MANAGEMENT_URL}}/v3/assets/request"
+    name: Get all Assets
+    description: ""
+    method: POST
+    body: {}
+    parameters: []
+    headers:
+      - id: pair_f8169132476d48afac20ac1e95325eec
+        name: x-api-key
+        value: password
+        description: ""
+      - id: pair_23944c72cda54927b259d7ff7393c3c5
+        name: content-type
+        value: application/json
+        description: ""
+    authentication: {}
+    metaSortKey: -1697497986391
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_6c90a8924bbd47f09fab507501ae6eed
+    parentId: fld_c7511cda01fb432e950335aee9df3228
+    modified: 1702475634357
+    created: 1692633811794
+    url: "{{PROVIDER_MANAGEMENT_URL}}/v2/policydefinitions/request"
+    name: Get all Policies
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "@context": {
+                "odrl": "http://www.w3.org/ns/odrl/2/"
+            },
+            "id": "{{POLICY_ID}}",
+            "policy": {
+                "prohibitions": [],
+                "obligations": [],
+                "permissions": [
+                    {
+                        "edctype": "dataspaceconnector:permission",
+                        "action": {
+                            "type": "USE"
+                        },
+                        "constraints": []
+                    }
+                ]
+            }
+        }
+    parameters: []
+    headers:
+      - id: pair_6de403fc93994f4eb8026fe40bfadb90
+        name: x-api-key
+        value: password
+        description: ""
+      - id: pair_cf68bb6e538b4c9f84ef24ec68f725d3
+        name: content-type
+        value: application/json
+        description: ""
+    authentication: {}
+    metaSortKey: -1697497986291
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_da0952c83b0d4e1fbc18d88645d4732a
+    parentId: fld_c7511cda01fb432e950335aee9df3228
+    modified: 1707865661607
+    created: 1692633811795
+    url: "{{PROVIDER_MANAGEMENT_URL}}/v2/contractdefinitions"
+    name: Create Contract Definitiion
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |-
+        {
+            "@context": {},
+            "@id": "3",
+            "@type": "ContractDefinition",
+            "accessPolicyId": "1",
+            "contractPolicyId": "1",
+            "assetsSelector" : {
+                "@type" : "CriterionDto",
+                "operandLeft": "{{EDC_NAMESPACE}}id",
+                "operator": "=",
+                "operandRight": "3"
+            }
+        }
+    parameters: []
+    headers:
+      - id: pair_3815d05e2f1b4a05aa0d2e3f9d7105e0
+        name: x-api-key
+        value: password
+        description: ""
+      - id: pair_32d04cb411b348ee9033a2c8bc6caa36
+        name: content-type
+        value: application/json
+        description: ""
+    authentication: {}
+    metaSortKey: -1697497986191
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_89535d488b92499d91100123bcb79cf5
+    parentId: fld_c7511cda01fb432e950335aee9df3228
+    modified: 1700639788551
+    created: 1692633811796
+    url: "{{PROVIDER_MANAGEMENT_URL}}/v2/contractdefinitions/request"
+    name: Get all Contract Definitiions
+    description: ""
+    method: POST
+    body: {}
+    parameters: []
+    headers:
+      - id: pair_29eecfaf652240ef917b92d04651ccc3
+        name: x-api-key
+        value: password
+        description: ""
+      - id: pair_8d50758cf6064b0eaaf52332e8e68a0b
+        name: content-type
+        value: application/json
+        description: ""
+    authentication: {}
+    metaSortKey: -1697497986091
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_0a17fffcde0847bbb5fee6a4c01e36bc
+    parentId: fld_c7511cda01fb432e950335aee9df3228
+    modified: 1697498346940
+    created: 1697488684247
+    url: "{{PROVIDER_MANAGEMENT_URL}}/v2/contractagreements/request"
+    name: Get all Contract Agreements
+    description: ""
+    method: POST
+    body: {}
+    parameters: []
+    headers:
+      - name: x-api-key
+        value: password
+        id: pair_98fb778a1b5f4f7f866dceac62a0012b
+      - id: pair_65989e6b00a94914bc1739188dc9cbb0
+        name: content-type
+        value: application/json
+        description: ""
+      - id: pair_ee6da077f0cc4b6c8e1f166aed1ee3ca
+        name: ""
+        value: ""
+        description: ""
+    authentication: {}
+    metaSortKey: -1697497985991
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_9c450682b55641e185d978dcc758ecb9
+    parentId: fld_9995eea170d6443abd82a7d018584ef6
+    modified: 1707857681868
+    created: 1692633442341
+    url: https://<lb-domain>/bob/health/api/check/liveness
+    name: Bob Liveness
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: Insomnia/2023.5.5
+    authentication: {}
+    metaSortKey: -1697498022041
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_9995eea170d6443abd82a7d018584ef6
+    parentId: fld_da0f8b64d8024eaea0c26a05421ca40f
+    modified: 1697498017424
+    created: 1697498012216
+    name: Bob
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1697497583685.5
+    _type: request_group
+  - _id: req_91dc5527b5fe404d87883ad2334d55a0
+    parentId: fld_9995eea170d6443abd82a7d018584ef6
+    modified: 1707865836184
+    created: 1692633811798
+    url: "{{CONSUMER_MANAGEMENT_URL}}/v2/catalog/request"
+    name: Query Catalog
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: |
+        {
+            "@context": {
+                "edc": "https://w3id.org/edc/v0.0.1/ns/"
+            },
+            "@type": "CatalogRequest",
+            "providerUrl": "http://alice-controlplane:8084/api/v1/dsp",
+          	"counterPartyAddress":"http://bob-controlplane:8084/api/v1/dsp",
+            "protocol": "dataspace-protocol-http",
+            "querySpec": {
+                "offset": 0,
+                "limit": 50
+            }
+        }
+    parameters: []
+    headers:
+      - id: pair_1d642e4b91d34fac8b5bb5123171e8c3
+        name: x-api-key
+        value: password
+        description: ""
+      - id: pair_3825d6a2631e4eeb9200428aa663fd61
+        name: content-type
+        value: application/json
+        description: ""
+    authentication: {}
+    metaSortKey: -1697498021941
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_e4700cedc2c04f988322f30530799611
+    parentId: fld_9995eea170d6443abd82a7d018584ef6
+    modified: 1707865790856
+    created: 1692633811799
+    url: "{{CONSUMER_MANAGEMENT_URL}}/v2/contractnegotiations"
+    name: Initiate Negotation
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: >-
+        {
+        	"@context": {
+        		"odrl": "http://www.w3.org/ns/odrl/2/"
+        	},
+        	"@type": "NegotiationInitiateRequestDto",
+        	"connectorAddress": "{{PROVIDER_PROTOCOL_URL}}",
+        	"protocol": "dataspace-protocol-http",
+        	"connectorId": "{{PROVIDER_ID}}",
+        	"providerId": "{{PROVIDER_ID}}",
+        	"offer": {
+        		"offerId": "Mw==:Mw==:ZDM4Nzk3NmUtZjA0Ny00ZmNjLWFhNWItYjQwYmVkMDBhZGYy",
+        		"assetId": "3",
+        		"policy": {
+        			"@type": "odrl:Set",
+        			"odrl:permission": {
+        				"odrl:target": "3",
+        				"odrl:action": {
+        					"odrl:type": "USE"
+        				},
+        				"odrl:constraint": {
+        					"odrl:or": {
+        						"odrl:leftOperand": "BusinessPartnerNumber",
+        						"odrl:operator": {
+                                    "@id": "odrl:eq"
+                                },
+        						"odrl:rightOperand": "{{POLICY_BPN}}"
+        					}
+        				}
+        			},
+        			"odrl:prohibition": [],
+        			"odrl:obligation": [],
+        			"odrl:target": "3"
+        		}
+        	}
+        }
+    parameters: []
+    headers:
+      - id: pair_b6435a07103140d1bc6e121a473f34eb
+        name: x-api-key
+        value: password
+        description: ""
+      - id: pair_063592dc264b4bc1a08c63bc6be3f873
+        name: content-type
+        value: application/json
+        description: ""
+    authentication: {}
+    metaSortKey: -1697498021841
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_5e22159c7bc14fb39bf7eb3f385aaf30
+    parentId: fld_9995eea170d6443abd82a7d018584ef6
+    modified: 1697498030525
+    created: 1692633811800
+    url: "{{CONSUMER_MANAGEMENT_URL}}/v2/contractnegotiations/request"
+    name: Get all Negotations
+    description: ""
+    method: POST
+    body: {}
+    parameters: []
+    headers:
+      - id: pair_661b5211fdae4779b368ec2e94409e5c
+        name: x-api-key
+        value: password
+        description: ""
+      - id: pair_45ed5806574e4521895ac3c681e787bc
+        name: content-type
+        value: application/json
+        description: ""
+    authentication: {}
+    metaSortKey: -1697498021741
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_5da2c722a8c942088714e719a8de25a9
+    parentId: fld_9995eea170d6443abd82a7d018584ef6
+    modified: 1707865981805
+    created: 1692633811801
+    url: "{{CONSUMER_MANAGEMENT_URL}}/v2/transferprocesses"
+    name: Initiate Transfer
+    description: ""
+    method: POST
+    body:
+      mimeType: ""
+      text: >
+        {
+            "@context": {
+                "odrl": "http://www.w3.org/ns/odrl/2/"
+            },
+            "assetId": "3",
+            "connectorAddress": "{{PROVIDER_PROTOCOL_URL}}",
+            "connectorId": "{{PROVIDER_ID}}",
+            "contractId": "Mw==:Mw==:ZDVkNzkxZjgtNDJmOS00ZTYyLTgzYjUtZmUzZTY1OGYyNWNk",
+            "dataDestination": {
+        				"type": "AmazonS3",
+        				"keyName": "consumer/example.json",
+        				"region": "eu-central-1",
+        				"bucketName": "mvd-for-catenax"
+            },
+            "protocol": "dataspace-protocol-http",
+            "transferType": {
+                "contentType": "application/octet-stream",
+                "isFinite": true
+            }
+        }
+    parameters: []
+    headers:
+      - id: pair_206b593f777b4eb3b679572359a82b35
+        name: x-api-key
+        value: password
+        description: ""
+      - id: pair_687d5446bcd240f896d4a49f9e4bbc5a
+        name: content-type
+        value: application/json
+        description: ""
+    authentication: {}
+    metaSortKey: -1697498021641
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_8109a64651d74c06bce21a56f8926148
+    parentId: fld_9995eea170d6443abd82a7d018584ef6
+    modified: 1697499148429
+    created: 1692633811802
+    url: "{{CONSUMER_MANAGEMENT_URL}}/v2/transferprocesses/request"
+    name: Get all Transfers
+    description: ""
+    method: POST
+    body: {}
+    parameters: []
+    headers:
+      - id: pair_404d5060e27442cc8c162276921fa4ca
+        name: x-api-key
+        value: password
+        description: ""
+      - id: pair_f7bc575c9ba948f4afb0d544c8b15406
+        name: content-type
+        value: application/json
+        description: ""
+    authentication: {}
+    metaSortKey: -1697498021541
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_2b6a6521f4864014a1014fd0a745c89f
+    parentId: fld_9995eea170d6443abd82a7d018584ef6
+    modified: 1697498573100
+    created: 1695302071801
+    url: "{{CONSUMER_MANAGEMENT_URL}}/v2/transferprocesses/da2606f8-26b0-40a2-b077-\
+      696f4208af4d/terminate"
+    name: Terminate Transfer
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "@context": {
+            "edc": "https://w3id.org/edc/v0.0.1/ns/"
+          },
+          "@type": "https://w3id.org/edc/v0.0.1/ns/TerminateTransfer",
+          "reason": "misconfigured"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - id: pair_404d5060e27442cc8c162276921fa4ca
+        name: x-api-key
+        value: password
+        description: ""
+    authentication: {}
+    metaSortKey: -1697498021441
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: env_99d30891da4bdcebc63947a8fc17f076de878684
+    parentId: wrk_scratchpad
+    modified: 1697404119402
+    created: 1697404119402
+    name: Base Environment
+    data: {}
+    dataPropertyOrder: null
+    color: null
+    isPrivate: false
+    metaSortKey: 1697404119402
+    _type: environment
+  - _id: jar_99d30891da4bdcebc63947a8fc17f076de878684
+    parentId: wrk_scratchpad
+    modified: 1697404119407
+    created: 1697404119407
+    name: Default Jar
+    cookies: []
+    _type: cookie_jar
