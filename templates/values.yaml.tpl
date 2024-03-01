@@ -38,7 +38,7 @@ controlplane:
       authKey: password
   image:
     pullPolicy: Never
-    tag: "0.5.3"
+    tag: "0.5.4"
 #    repository: "edc-controlplane-postgresql-hashicorp-vault"
   securityContext:
     # avoids some errors in the log: cannot write temp files of large multipart requests when R/O
@@ -60,7 +60,7 @@ dataplane:
     enabled: true
   image:
     pullPolicy: Never
-    tag: "0.5.3"
+    tag: "0.5.4"
 #    repository: "edc-dataplane-hashicorp-vault"
   securityContext:
     # avoids some errors in the log: cannot write temp files of large multipart requests when R/O
