@@ -20,6 +20,9 @@ MXD_COMMIT="8532a72e069beaeda54f7aab00e2dcb951fa274f"
 function create_mvd {
     echo -e "${CY}Creating Minimum Viable Dataspace for Catena-X on AWS...${NC}"
 
+    echo "Please enter an alphanumeric string to protect access to your connector APIs."
+    read -s -p "EDC authentication key: " edc_auth_key
+
     terraform init
     terraform apply -auto-approve
 
@@ -49,7 +52,8 @@ function create_mvd {
 
     sed -e "s|ALICE_DB_ENDPOINT|${alice_db_endpoint}|" -e "s|ALICE_DB_PASSWORD|${alice_db_password}|" -e "s|BOB_DB_ENDPOINT|${bob_db_endpoint}|" \
         -e "s|BOB_DB_PASSWORD|${bob_db_password}|" ../../templates/main.tf.tpl > main.tf
-    sed -e "s|EDC_ACCESS_KEY_ID|${edc_access_key_id}|" -e "s|EDC_ACCESS_KEY_SECRET|${edc_access_key_secret}|" ../../templates/values.yaml.tpl > modules/connector/values.yaml
+    sed -e "s|EDC_ACCESS_KEY_ID|${edc_access_key_id}|" -e "s|EDC_ACCESS_KEY_SECRET|${edc_access_key_secret}|" -e "s|EDC_AUTH_KEY|${edc_auth_key}|g" \
+        ../../templates/values.yaml.tpl > modules/connector/values.yaml
 
     # Deploy Tractus-X MXD
 

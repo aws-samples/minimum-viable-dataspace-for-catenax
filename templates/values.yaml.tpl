@@ -35,7 +35,7 @@ controlplane:
     type: NodePort
   endpoints:
     management:
-      authKey: password
+      authKey: "EDC_AUTH_KEY"
   image:
     pullPolicy: Never
     tag: "0.5.4"
@@ -71,7 +71,7 @@ dataplane:
     accessKeyId: "EDC_ACCESS_KEY_ID"
 
   env:
-    "EDC_API_AUTH_KEY" : "password"
+    "EDC_API_AUTH_KEY": "EDC_AUTH_KEY"
 
 postgresql:
    # JDBC URL should be set from `main.tf`
