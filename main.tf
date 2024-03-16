@@ -87,7 +87,7 @@ module "eks" {
 
   eks_managed_node_groups = {
     mng_ondemand = {
-      instance_types = ["t3a.large"]
+      instance_types = ["t3a.medium"]
 #     capacity_type  = "SPOT"
 
       min_size     = 1
@@ -149,7 +149,6 @@ module "rds-aurora-alice" {
 
   name              = "${local.name}-alice"
   engine            = data.aws_rds_engine_version.postgresql.engine
-  engine_mode       = "provisioned"
   engine_version    = data.aws_rds_engine_version.postgresql.version
   storage_encrypted = true
   master_username   = "postgres"
@@ -166,17 +165,11 @@ module "rds-aurora-alice" {
     }
   }
 
-  monitoring_interval = 60
-
   apply_immediately   = true
   skip_final_snapshot = true
 
-  serverlessv2_scaling_configuration = {
-    min_capacity = 1
-    max_capacity = 3
-  }
+  instance_class = "db.t4g.medium"
 
-  instance_class = "db.serverless"
   instances = {
     one = {}
     two = {}
@@ -196,7 +189,6 @@ module "rds-aurora-bob" {
 
   name              = "${local.name}-bob"
   engine            = data.aws_rds_engine_version.postgresql.engine
-  engine_mode       = "provisioned"
   engine_version    = data.aws_rds_engine_version.postgresql.version
   storage_encrypted = true
   master_username   = "postgres"
@@ -213,17 +205,11 @@ module "rds-aurora-bob" {
     }
   }
 
-  monitoring_interval = 60
-
   apply_immediately   = true
   skip_final_snapshot = true
 
-  serverlessv2_scaling_configuration = {
-    min_capacity = 1
-    max_capacity = 3
-  }
+  instance_class = "db.t4g.medium"
 
-  instance_class = "db.serverless"
   instances = {
     one = {}
     two = {}
