@@ -38,7 +38,6 @@ controlplane:
       authKey: "EDC_AUTH_KEY"
   image:
     pullPolicy: Never
-    tag: "0.5.4"
 #    repository: "edc-controlplane-postgresql-hashicorp-vault"
   securityContext:
     # avoids some errors in the log: cannot write temp files of large multipart requests when R/O
@@ -60,18 +59,17 @@ dataplane:
     enabled: true
   image:
     pullPolicy: Never
-    tag: "0.5.4"
 #    repository: "edc-dataplane-hashicorp-vault"
   securityContext:
     # avoids some errors in the log: cannot write temp files of large multipart requests when R/O
     readOnlyRootFilesystem: false
   aws:
-    endpointOverride: ""
-    secretAccessKey: "EDC_ACCESS_KEY_SECRET"
-    accessKeyId: "EDC_ACCESS_KEY_ID"
+    endpointOverride: http://minio:9000
+    secretAccessKey: qwerty123
+    accessKeyId: qwerty123
 
   env:
-    "EDC_API_AUTH_KEY": "EDC_AUTH_KEY"
+    "EDC_API_AUTH_KEY" : "EDC_AUTH_KEY"
 
 postgresql:
    # JDBC URL should be set from `main.tf`
@@ -86,6 +84,8 @@ vault:
     token: root
   secretNames:
     transferProxyTokenEncryptionAesKey: aes-keys
+    transferProxyTokenSignerPrivateKey: transferProxyTokenSignerPrivateKey
+    transferProxyTokenSignerPublicKey: transferProxyTokenSignerPublicKey
     # this must be set through CLI args: --set vault.secrets=$YOUR_VAULT_SECRETS where YOUR_VAULT_SECRETS should
     #    # be a string in the format "key1:secret1;key2:secret2;..."
     secrets:

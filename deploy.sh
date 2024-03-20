@@ -12,8 +12,8 @@ NC='\033[0m'
 AWS_REGION="eu-central-1"
 PROJECT_NAME="mvd-for-catenax"
 
-# MXD state from 2024-01-09
-MXD_COMMIT="8532a72e069beaeda54f7aab00e2dcb951fa274f"
+# MXD state from 2024-03-19
+MXD_COMMIT="55c8231420b2db31ee7b9e21186ed69df29a0dbd"
 
 # ---
 
@@ -50,10 +50,12 @@ function create_mvd {
     cd tutorial-resources/mxd/
     git checkout "${MXD_COMMIT}"
 
-    sed -e "s|ALICE_DB_ENDPOINT|${alice_db_endpoint}|" -e "s|ALICE_DB_PASSWORD|${alice_db_password}|" -e "s|BOB_DB_ENDPOINT|${bob_db_endpoint}|" \
-        -e "s|BOB_DB_PASSWORD|${bob_db_password}|" ../../templates/main.tf.tpl > main.tf
-    sed -e "s|EDC_ACCESS_KEY_ID|${edc_access_key_id}|" -e "s|EDC_ACCESS_KEY_SECRET|${edc_access_key_secret}|" -e "s|EDC_AUTH_KEY|${edc_auth_key}|g" \
-        ../../templates/values.yaml.tpl > modules/connector/values.yaml
+    sed -e "s|ALICE_DB_ENDPOINT|${alice_db_endpoint}|" -e "s|ALICE_DB_PASSWORD|${alice_db_password}|" \
+        -e "s|BOB_DB_ENDPOINT|${bob_db_endpoint}|" -e "s|BOB_DB_PASSWORD|${bob_db_password}|" \
+        -e "s|EDC_ACCESS_KEY_ID|${edc_access_key_id}|g" -e "s|EDC_ACCESS_KEY_SECRET|${edc_access_key_secret}|g" ../../templates/main.tf.tpl > main.tf
+    sed -e "s|EDC_AUTH_KEY|${edc_auth_key}|g" ../../templates/connector-values.yaml.tpl > modules/connector/values.yaml
+
+    cat ../../templates/connector-main.tf.tpl > modules/connector/main.tf
 
     # Deploy Tractus-X MXD
 
