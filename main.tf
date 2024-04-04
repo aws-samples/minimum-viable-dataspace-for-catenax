@@ -354,6 +354,9 @@ resource "helm_release" "metrics_server" {
   repository = "https://kubernetes-sigs.github.io/metrics-server/"
   chart      = "metrics-server"
   version    = "3.12.0"
+
+  # Ensure Helm release is purged before EKS access entries are destroyed
+  depends_on = [module.eks]
 }
 
 resource "helm_release" "ingress_nginx" {
@@ -384,4 +387,7 @@ resource "helm_release" "ingress_nginx" {
 
     })
   ]
+
+  # Ensure Helm release is purged before EKS access entries are destroyed
+  depends_on = [module.eks]
 }
