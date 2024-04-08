@@ -17,7 +17,7 @@ MXD_COMMIT="55c8231420b2db31ee7b9e21186ed69df29a0dbd"
 
 # ---
 
-KUBE_CONFIG_PATH="~/.kube/config"
+export KUBE_CONFIG_PATH="~/.kube/config"
 
 function create_mvd {
     echo -e "${CY}Creating Minimum Viable Dataspace for Catena-X on AWS...${NC}"

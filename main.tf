@@ -122,6 +122,15 @@ module "eks" {
   tags = local.tags
 }
 
+data "aws_iam_roles" "autoscaling" {
+  name_regex = "AWSServiceRoleForAutoScaling"
+}
+
+resource "aws_iam_service_linked_role" "autoscaling" {
+  count = length(data.aws_iam_roles.autoscaling.arns) == 0 ? 1 : 0
+  aws_service_name = "autoscaling.amazonaws.com"
+}
+
 module "ebs_kms_key" {
 
   source = "git::https://github.com/terraform-aws-modules/terraform-aws-kms.git?ref=22226b6b6841a26e99c5e122ba947d10a43c8321"  # commit hash of version 2.2.1
@@ -139,6 +148,9 @@ module "ebs_kms_key" {
   ]
 
   tags = local.tags
+
+  # Ensure AWSServiceRoleForAutoScaling exists to prevent https://github.com/hashicorp/terraform-provider-aws/issues/28644
+  depends_on = [aws_iam_service_linked_role.autoscaling]
 }
 
 data "aws_rds_engine_version" "postgresql" {
