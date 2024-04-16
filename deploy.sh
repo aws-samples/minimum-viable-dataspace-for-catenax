@@ -25,6 +25,11 @@ function create_mvd {
     echo "Please enter an alphanumeric string to protect access to your connector APIs."
     read -s -p "EDC authentication key: " edc_auth_key
 
+    # Ensure AWSServiceRoleForAutoScaling exists to prevent https://github.com/hashicorp/terraform-provider-aws/issues/28644
+    if ! aws iam get-role --role-name AWSServiceRoleForAutoScaling >/dev/null 2>&1; then
+        aws iam create-service-linked-role --aws-service-name autoscaling.amazonaws.com >/dev/null
+    fi
+
     terraform init
     terraform apply -auto-approve
 
