@@ -4,8 +4,8 @@
 # SPDX-License-Identifier: MIT-0
 
 set -e
-CY='\033[0;36m'
-NC='\033[0m'
+CY="\033[0;36m"
+NC="\033[0m"
 
 # ---
 
@@ -17,7 +17,8 @@ MXD_COMMIT="55c8231420b2db31ee7b9e21186ed69df29a0dbd"
 
 # ---
 
-export KUBE_CONFIG_PATH="~/.kube/config"
+# If local Kubernetes credentials exist, make sure Terraform Helm provider uses them
+if [ -f "~/.kube/config" ]; then export KUBE_CONFIG_PATH="~/.kube/config"; fi
 
 function create_mvd {
     echo -e "${CY}Creating Minimum Viable Dataspace for Catena-X on AWS...${NC}"
@@ -62,6 +63,7 @@ function create_mvd {
         -e "s|EDC_ACCESS_KEY_ID|${edc_access_key_id}|g" -e "s|EDC_ACCESS_KEY_SECRET|${edc_access_key_secret}|g" ../../templates/main.tf.tpl > main.tf
     sed -e "s|EDC_AUTH_KEY|${edc_auth_key}|g" ../../templates/connector-values.yaml.tpl > modules/connector/values.yaml
 
+    sed -e "s|password|${edc_auth_key}|g" -i "" postman/mxd-seed.json
     cat ../../templates/connector-main.tf.tpl > modules/connector/main.tf
 
     # Deploy Tractus-X MXD
