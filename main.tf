@@ -63,6 +63,12 @@ module "eks" {
   subnet_ids                = module.vpc.private_subnets
   cluster_service_ipv4_cidr = local.cluster_service_cidr
 
+  cluster_addons = {
+    aws-ebs-csi-driver = {
+      most_recent = true
+    }
+  }
+
   access_entries = {
     admin-role = {
       kubernetes_groups = []
@@ -115,6 +121,10 @@ module "eks" {
             delete_on_termination = true
           }
         }
+      }
+
+      iam_role_additional_policies = {
+        AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
       }
     }
   }
