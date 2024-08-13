@@ -1,8 +1,8 @@
-# Data exchange walk-through
+# Data Exchange Walk-Through
 
-## Step 1: Environment setup
+## Step 1: Environment Setup
 
-Inside the cloned repository, run the ```deploy.sh``` script, which will use the default AWS CLI settings to deploy the MVD using Terraform. The deployment will take 15-20 minutes to complete. When prompted, provide a secret API key and store it as an environment variable:
+Inside the cloned repository, run the ```./deploy.sh``` script, which will use the default AWS CLI settings to deploy the MVD using Terraform. The deployment will take 15-20 minutes to complete. When prompted, provide a secret API key and store it as an environment variable:
 
 ```bash
 ./deploy.sh up
@@ -11,12 +11,12 @@ Inside the cloned repository, run the ```deploy.sh``` script, which will use the
 export API_KEY=<SECRET_API_KEY>
 ```
 
-The deployment defaults to the ```eu-central-1``` (Frankfurt) region but can be changed in ```./locals.tf```. After it’s deployed, the script will print the Alice and Bob Amazon S3 bucket names; store these in variables:
+The deployment defaults to the ```eu-central-1``` (Frankfurt) region but can be changed in ```./locals.tf``` and ```./deploy.sh```. After it’s deployed, the script will print the Alice and Bob Amazon S3 bucket names - store these in variables:
 
 ```bash
 export ALICE_BUCKET=<ALICE_BUCKET_NAME>
 export BOB_BUCKET=<BOB_BUCKET_NAME>
-````
+```
 
 Next, obtain the NLB Domain Name System (DNS) name.
 
@@ -36,14 +36,15 @@ Store the DNS name of the NLB created for Alice, Bob, and the MXD ingresses:
 export NLB_DNS=<NAME>.elb.eu-central-1.amazonaws.com
 ```
 
+## Step 2: Create a File in Alice’s Bucket
 
-## Step 2: Create a file in Alice’s bucket.
 ```bash
 echo "Hello World" >> alice-file.txt
 aws s3 cp alice-file.txt s3://$ALICE_BUCKET
 ```
 
-## Step 3: Create the Asset.
+## Step 3: Create the EDC Asset
+
 Next, Alice has to register the file in Amazon S3 with the data space connector by creating an Asset.
 ```bash
 curl -k --location "https://$NLB_DNS/alice/management/v3/assets" \
@@ -68,8 +69,9 @@ curl -k --location "https://$NLB_DNS/alice/management/v3/assets" \
 }'
 ```
 
-## Step 4: Create a usage Policy.
-Usage of Assets can be restricted by attaching contracts to them. Restrictions are defined by Policies that are attached to Contracts. Before Alice can create a Contract, she has to create those Policies. Alice wants to restrict usage of the Asset to data space participants who have an active Catena-X business partner number (BPN); that is, those who are registered in the data space and are currently active members. The following usage Policy achieves this.
+## Step 4: Create the EDC Usage Policy
+
+Usage of Assets can be restricted by attaching contracts to them. Restrictions are defined by Policies that are attached to Contracts. Before Alice can create a Contract, she has to create those Policies. Alice wants to restrict usage of the Asset to data space participants who have an active Catena-X business partner number (BPN); that is, those who are registered in the data space and are currently active members. The following Usage Policy achieves this.
 ```bash
 curl -k --location "https://$NLB_DNS/alice/management/v2/policydefinitions" \
 --header 'Content-Type: application/json' \
@@ -104,8 +106,9 @@ curl -k --location "https://$NLB_DNS/alice/management/v2/policydefinitions" \
 }'
 ```
 
-## Step 5: Create the contract Policy.
-The contract Policy restricts who can enter a Contract for the Asset with the asset provider. Here, Alice restricts access to Bob by allow-listing his BPN.
+## Step 5: Create the EDC Contract Policy
+
+The Contract Policy restricts who can enter a Contract for the Asset with the asset provider. Here, Alice restricts access to Bob by allow-listing his BPN.
 ```bash
 curl -k --location "https://$NLB_DNS/alice/management/v2/policydefinitions" \
 --header 'Content-Type: application/json' \
@@ -140,7 +143,8 @@ curl -k --location "https://$NLB_DNS/alice/management/v2/policydefinitions" \
 }'
 ```
 
-## Step 6: Create a Contract definition.
+## Step 6: Create the EDC Contract Definition
+
 Now, Alice is ready to create the Contract for the Asset and assign the two previously created Policies to it.
 ```bash
 curl -k --location "https://$NLB_DNS/alice/management/v2/contractdefinitions" \
@@ -161,8 +165,9 @@ curl -k --location "https://$NLB_DNS/alice/management/v2/contractdefinitions" \
 }'
 ```
 
-## Step 7: Query Alice’s data catalog.
-All the previous interactions were with Alice’s instance of the data space connector. Because we let Bob see the Contract by adding his BPN to the contract Policy, he should now see the Contract when querying Alice’s data catalog. 
+## Step 7: Query Alice’s Data Catalog
+
+All the previous interactions were with Alice’s instance of the data space connector. Because we let Bob see the Contract by adding his BPN to the Contract Policy, he should now see the Contract when querying Alice’s data catalog.
 ```bash
 curl -k --location "https://$NLB_DNS/bob/management/v2/catalog/request" \
 --header 'Content-Type: application/json' \
@@ -199,10 +204,11 @@ You will get output similar to this:
     ],...
 }
 ```
-Take note of the <CONTRACT_ID> of the response. You will need it in the next step.
+Take note of the `<CONTRACT_ID>` of the response. You will need it in the next step.
 
-## Step 8: Initiate a Contract Negotiation.
-Next, Bob has to initiate a contract Negotiation for the Asset. During a Contract Negotiation, the connectors check whether both parties are authorized to enter the contract.
+## Step 8: Initiate the EDC Contract Negotiation
+
+Next, Bob has to initiate a Contract Negotiation for the Asset. During a Contract Negotiation, the connectors check whether both parties are authorized to enter the contract.
 ```bash
 curl -k --location "https://$NLB_DNS/bob/management/v2/contractnegotiations" \
 --header 'Content-Type: application/json' \
@@ -247,7 +253,7 @@ curl -k --location "https://$NLB_DNS/bob/management/v2/contractnegotiations" \
 }'
 ```
 
-Take note of the <NEGOTIATION_ID>. You will need it in the next step. 
+Take note of the `<NEGOTIATION_ID>`. You will need it in the next step.
 ```bash
 {
     "@type": "edc:IdResponse",
@@ -257,26 +263,31 @@ Take note of the <NEGOTIATION_ID>. You will need it in the next step.
 }
 ```
 
-## Step 9: Check the Negotiation result.
+## Step 9: Check the Negotiation Result
+
 Bob can now check whether the Negotiation was successful and whether he can therefore start the Asset transfer process from Alice’s Amazon S3 bucket to his own Amazon S3 bucket.
 ```bash
 curl -k --location "https://$NLB_DNS/bob/management/v2/contractnegotiations/<NEGOTIATION_ID>" \
 --header "X-Api-Key: $API_KEY"
+```
 You should see a “FINALIZED” negotiation.
+```bash
 {
     "@type": "edc:ContractNegotiation",
     "@id": "<NEGOTIATION_ID>",
     ...
     "edc:state": "FINALIZED",
     ...
-    "edc:contractAgreementId": "<CONTRACT_ID>",
+    "edc:contractAgreementId": "<CONTRACT_AGREEMENT_ID>",
     ...
 }
 ```
 
-## Step 10: Initiate the data transfer.
+Take note of the `<CONTRACT_AGREEMENT_ID>`. You will need it in the next step.
 
-Using the <CONTRACT_ID> of the negotiated contract, Bob can now initiate the data transfer. For this, he has to specify the destination of the data transfer, which is his Amazon S3 bucket. The source and destination of the data transfer are decoupled. It would similarly be possible to transfer data to a destination different from Amazon S3 or to pull data through an HTTP endpoint directly. 
+## Step 10: Initiate the EDC Data Transfer
+
+Using the `<CONTRACT_AGREEMENT_ID>` of the negotiated contract, Bob can now initiate a data transfer. For this, he has to specify the destination of the data transfer, such as his Amazon S3 bucket. The source and destination of the data transfer are decoupled. It would similarly be possible to transfer data to a destination different from Amazon S3 or to pull data through an HTTP endpoint directly. 
 ```bash
 curl -k --location "https://$NLB_DNS/bob/management/v2/transferprocesses" \
 --header 'Content-Type: application/json' \
@@ -288,7 +299,7 @@ curl -k --location "https://$NLB_DNS/bob/management/v2/transferprocesses" \
   "assetId": "20",
   "connectorAddress": "http://alice-controlplane:8084/api/v1/dsp",
   "connectorId": "BPNL000000000001",
-  "contractId": "<CONTRACT_ID>",
+  "contractId": "<CONTRACT_AGREEMENT_ID>",
   "dataDestination": {
     "type": "AmazonS3",
     "keyName": "alice-file.txt",
@@ -309,7 +320,10 @@ You should get an output similar to this:
 }
 ```
 
-## Step 11: Check the data transfer status.
+Take note of the `<TRANSFER_ID>`. You will need it in the final step.
+
+## Step 11: Check the EDC Data Transfer Status
+
 During the data transfer process, Bob can check its status:
 ```bash
 curl -k --location "https://$NLB_DNS/bob/management/v2/transferprocesses/<TRANSFER_ID>" \
@@ -325,12 +339,13 @@ You should get an output similar to this:
     "edc:stateTimestamp": 1710329092276,
     "edc:type": "CONSUMER",
     "edc:assetId": "20",
-    "edc:contractId": "<CONTRACT_ID>",
+    "edc:contractId": "<CONTRACT_AGREEMENT_ID>",
     ...
 }
 ```
 
-# Step 12: Inspect the transferred file.
+## Step 12: Inspect the Transferred File
+
 The data transfer will complete within a few seconds. Bob can now inspect his Amazon S3 bucket and will find the transferred file, indicating that the transfer has been completed successfully. 
 ```bash
 aws s3 ls $BOB_BUCKET

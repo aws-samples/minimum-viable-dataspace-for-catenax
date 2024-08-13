@@ -2,7 +2,7 @@
 
 In October 2023, the Catena-X Automotive Network was productively launched. [Catena-X](https://catena-x.net/) aims to create greater transparency by building a trustworthy, collaborative, open and secure data ecosystem for the automotive industry. [AWS joined Catena-X](https://aws.amazon.com/blogs/industries/aws-joins-catena-x/) as a member in January 2023.
 
-This sample extends Catena-X' [Tractus-X MXD implementation](https://github.com/eclipse-tractusx/tutorial-resources/tree/main/mxd) to deploy a single-command Minimum Viable Dataspace (MVD) for Catena-X on AWS. For users, this serves as a starting point for experimentation around Catena-X onboarding, implementation against the Eclipse Dataspace Components' (EDC) API and realization of initial use cases. This repository provides a reference implementation for Catena-X release [24.03](https://github.com/eclipse-tractusx/tractus-x-release/blob/main/CHANGELOG.md#2403---2024-03-08) on AWS.
+This sample extends Catena-X' [Tractus-X MXD implementation](https://github.com/eclipse-tractusx/tutorial-resources/tree/main/mxd) to deploy a single-command Minimum Viable Dataspace (MVD) for Catena-X on AWS. For users, this serves as a starting point for experimentation around Catena-X onboarding, implementation against the Eclipse Dataspace Components' (EDC) API and realization of initial use cases. **This repository provides a reference implementation for Catena-X release [24.03](https://github.com/eclipse-tractusx/tractus-x-release/blob/main/CHANGELOG.md#2403---2024-03-08) on AWS.**
 
 ## Architecture
 
@@ -26,29 +26,34 @@ The deployment will take 15-20 minutes to complete. After the deployment is done
 ```bash
 ~ kubectl get pod
 
-NAME                                                    READY   STATUS    RESTARTS   AGE
-alice-minio-fd7f4f877-knvk6                             1/1     Running   0          4m47s
-alice-tractusx-connector-controlplane-8cbd78d87-fkr2h   1/1     Running   0          2m58s
-alice-tractusx-connector-dataplane-5874c4fdf6-stn5p     1/1     Running   0          2m58s
-alice-vault-0                                           1/1     Running   0          2m58s
-azurite-5845977b98-6ff7m                                1/1     Running   0          5m4s
-bob-minio-6444984bb6-q222c                              1/1     Running   0          4m47s
-bob-tractusx-connector-controlplane-66f69f7dbc-kkxq9    1/1     Running   0          2m58s
-bob-tractusx-connector-dataplane-575bc9cfcd-rskwm       1/1     Running   0          2m58s
-bob-vault-0                                             1/1     Running   0          2m58s
-keycloak-6f7c877cff-6s6zn                               1/1     Running   0          4m31s
-miw-967d66dd5-7wchx                                     1/1     Running   0          4m31s
-postgres-65d5475f95-tlwz4                               1/1     Running   0          4m47s
+NAME                                                     READY   STATUS              RESTARTS   AGE
+alice-minio-7b4b95cf79-r8jt4                             1/1     Running             0          7m13s
+alice-tractusx-connector-controlplane-7ff7b666b9-h24rm   1/1     Running             0          5m2s
+alice-tractusx-connector-dataplane-587bf89d6f-tzqmx      1/1     Running             0          5m2s
+alice-vault-0                                            1/1     Running             0          5m2s
+azurite-7cddb6c555-fjtvd                                 1/1     Running             0          7m29s
+backend-service-67dd4b974-h2x2s                          0/1     ErrImageNeverPull   0          7m13s
+bdrs-server-6f5d74c55f-m79hc                             1/1     Running             0          7m9s
+bdrs-server-vault-0                                      1/1     Running             0          7m9s
+bob-minio-54c4d656d6-j7hzh                               1/1     Running             0          7m13s
+bob-tractusx-connector-controlplane-5c94c684c-kzvtp      1/1     Running             0          5m1s
+bob-tractusx-connector-dataplane-58d6d4464d-q4f4d        1/1     Running             0          5m1s
+bob-vault-0                                              1/1     Running             0          5m1s
+common-postgres-5847467f7-n6w2m                          1/1     Running             0          7m29s
+keycloak-f8794dcb8-bxv5r                                 1/1     Running             0          7m13s
+miw-7645f67cf9-fkxbq                                     1/1     Running             0          7m13s
 
 ~ kubectl get ing
 
 NAME            CLASS   HOSTS   ADDRESS                                      PORTS   AGE
-alice-ingress   nginx   *       <lb-domain>.elb.eu-central-1.amazonaws.com   80      5m22s
-bob-ingress     nginx   *       <lb-domain>.elb.eu-central-1.amazonaws.com   80      5m23s
-mxd-ingress     nginx   *       <lb-domain>.elb.eu-central-1.amazonaws.com   80      3m40s
+alice-ingress   nginx   *       <lb-domain>.elb.eu-central-1.amazonaws.com   80      8m14s
+bob-ingress     nginx   *       <lb-domain>.elb.eu-central-1.amazonaws.com   80      8m14s
+mxd-ingress     nginx   *       <lb-domain>.elb.eu-central-1.amazonaws.com   80      6m7s
 ```
 
-All pods should be in a ready state, the seeding jobs should complete successfully. Concludingly, use this project's [Insomnia](https://github.com/aws-samples/minimum-viable-dataspace-for-catenax/tree/main/insomnia) file as a starting point to perform API operations against the MVD's EDC connectors. For further information about the MVD and its components on AWS refer to this repository's [docs section](https://github.com/aws-samples/minimum-viable-dataspace-for-catenax/tree/main/docs).
+**Note: Currently, the concluding MXD deployment times out during creation of the `kubernetes_deployment.backend-service` resource, terminating with the error `Waiting for rollout to finish: 1 replicas wanted; 0 replicas Ready`. This is an expected behavior and is due to the MXD's recently added backend service requiring a local Gradle build and loading process of the resulting container image, which this project does not yet support.**
+
+All pods, except for the `backend-service`, should be in a ready state, the seeding jobs should complete successfully. Concludingly, use this project's [Insomnia](https://github.com/aws-samples/minimum-viable-dataspace-for-catenax/tree/main/insomnia) file as a starting point to perform API operations against the MVD's EDC connectors. For further information about the MVD and its components on AWS refer to this repository's [docs section](https://github.com/aws-samples/minimum-viable-dataspace-for-catenax/tree/main/docs).
 
 ## Considerations for Production
 

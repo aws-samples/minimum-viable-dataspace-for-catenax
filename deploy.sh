@@ -12,8 +12,8 @@ NC="\033[0m"
 AWS_REGION="eu-central-1"
 PROJECT_NAME="mvd-for-catenax"
 
-# MXD state from 2024-03-19
-MXD_COMMIT="55c8231420b2db31ee7b9e21186ed69df29a0dbd"
+# MXD state from 2024-08-13
+MXD_COMMIT="8795f19273471194f092f1d1c618d780c69f2a4b"
 
 # ---
 
