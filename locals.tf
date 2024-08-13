@@ -4,7 +4,7 @@
 locals {
 
   name            = "mvd-for-catenax"
-  cluster_version = "1.29"
+  cluster_version = "1.30"
   region          = "eu-central-1"
 
   vpc_cidr             = "192.168.0.0/16"
