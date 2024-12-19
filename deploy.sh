@@ -12,8 +12,8 @@ NC="\033[0m"
 AWS_REGION="eu-central-1"
 PROJECT_NAME="mvd-for-catenax"
 
-# MXD state from 2024-08-13
-MXD_COMMIT="8795f19273471194f092f1d1c618d780c69f2a4b"
+# MXD state from 2024-12-04
+MXD_COMMIT="20f713708768c6e9aeebd209ac31269bf16f4e58"
 
 # ---
 
@@ -55,16 +55,26 @@ function create_mvd {
         git clone https://github.com/eclipse-tractusx/tutorial-resources.git
     fi
 
-    cd tutorial-resources/mxd/
+    cd tutorial-resources/
     git checkout "${MXD_COMMIT}"
 
-    sed -e "s|ALICE_DB_ENDPOINT|${alice_db_endpoint}|" -e "s|ALICE_DB_PASSWORD|${alice_db_password}|" \
-        -e "s|BOB_DB_ENDPOINT|${bob_db_endpoint}|" -e "s|BOB_DB_PASSWORD|${bob_db_password}|" \
-        -e "s|EDC_ACCESS_KEY_ID|${edc_access_key_id}|g" -e "s|EDC_ACCESS_KEY_SECRET|${edc_access_key_secret}|g" ../../templates/main.tf.tpl > main.tf
+    # Build and prepare MXD runtime images
+
+    cd mxd-runtimes/
+    ./gradlew dockerize
+
+    # Idea:
+    # 1/ Build Gradle Docker builds locally for all images
+    # 3/ Push the 3 built Docker images here to those 3 ECR registries (incl. auth)
+    # 4/ Adjust MXD templating as needed to use those 3 EDC registries
+
+#    sed -e "s|ALICE_DB_ENDPOINT|${alice_db_endpoint}|" -e "s|ALICE_DB_PASSWORD|${alice_db_password}|" \
+#        -e "s|BOB_DB_ENDPOINT|${bob_db_endpoint}|" -e "s|BOB_DB_PASSWORD|${bob_db_password}|" \
+#        -e "s|EDC_ACCESS_KEY_ID|${edc_access_key_id}|g" -e "s|EDC_ACCESS_KEY_SECRET|${edc_access_key_secret}|g" ../../templates/main.tf.tpl > main.tf
     sed -e "s|EDC_AUTH_KEY|${edc_auth_key}|g" ../../templates/connector-values.yaml.tpl > modules/connector/values.yaml
 
     sed -e "s|password|${edc_auth_key}|g" -i "" postman/mxd-seed.json
-    cat ../../templates/connector-main.tf.tpl > modules/connector/main.tf
+#    cat ../../templates/connector-main.tf.tpl > modules/connector/main.tf
 
     # Deploy Tractus-X MXD
 
