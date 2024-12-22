@@ -12,10 +12,10 @@ NC="\033[0m"
 AWS_REGION="eu-central-1"
 PROJECT_NAME="mvd-for-catenax"
 
+# ---
+
 # MXD state from 2024-12-04
 MXD_COMMIT="20f713708768c6e9aeebd209ac31269bf16f4e58"
-
-# ---
 
 # If local Kubernetes credentials exist, make sure Terraform Helm provider uses them
 if [ -f "~/.kube/config" ]; then export KUBE_CONFIG_PATH="~/.kube/config"; fi
@@ -58,23 +58,51 @@ function create_mvd {
     cd tutorial-resources/
     git checkout "${MXD_COMMIT}"
 
-    # Build and prepare MXD runtime images
+    # Build MXD runtime images
 
     cd mxd-runtimes/
     ./gradlew dockerize
 
-    # Idea:
-    # 1/ Build Gradle Docker builds locally for all images
-    # 3/ Push the 3 built Docker images here to those 3 ECR registries (incl. auth)
-    # 4/ Adjust MXD templating as needed to use those 3 EDC registries
+    # Push MXD runtime images to ECR
 
-#    sed -e "s|ALICE_DB_ENDPOINT|${alice_db_endpoint}|" -e "s|ALICE_DB_PASSWORD|${alice_db_password}|" \
-#        -e "s|BOB_DB_ENDPOINT|${bob_db_endpoint}|" -e "s|BOB_DB_PASSWORD|${bob_db_password}|" \
-#        -e "s|EDC_ACCESS_KEY_ID|${edc_access_key_id}|g" -e "s|EDC_ACCESS_KEY_SECRET|${edc_access_key_secret}|g" ../../templates/main.tf.tpl > main.tf
+    aws_account_id=$(aws sts get-caller-identity --query Account --output text)
+    aws_ecr_registry="${aws_account_id}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+
+    aws ecr get-login-password --region "${AWS_REGION}" | docker login --username AWS --password-stdin "${aws_ecr_registry}"
+
+    docker tag data-service-api:1.0.0   "${aws_ecr_registry}/${PROJECT_NAME}-data-service-api:1.0.0"
+    docker tag tx-catalog-server:0.8.0  "${aws_ecr_registry}/${PROJECT_NAME}-tx-catalog-server:0.8.0"
+    docker tag tx-identityhub:0.8.0     "${aws_ecr_registry}/${PROJECT_NAME}-tx-identityhub:0.8.0"
+    docker tag tx-identityhub-sts:0.8.0 "${aws_ecr_registry}/${PROJECT_NAME}-tx-identityhub-sts:0.8.0"
+    docker tag tx-sts:0.8.0             "${aws_ecr_registry}/${PROJECT_NAME}-tx-sts:0.8.0"
+
+    docker push "${aws_ecr_registry}/${PROJECT_NAME}-data-service-api:1.0.0"
+    docker push "${aws_ecr_registry}/${PROJECT_NAME}-tx-catalog-server:0.8.0"
+    docker push "${aws_ecr_registry}/${PROJECT_NAME}-tx-identityhub:0.8.0"
+    docker push "${aws_ecr_registry}/${PROJECT_NAME}-tx-identityhub-sts:0.8.0"
+    docker push "${aws_ecr_registry}/${PROJECT_NAME}-tx-sts:0.8.0"
+
+    # Adjust MXD templates
+
+    cd ../mxd/
+
+    sed -e "s|ALICE_DB_ENDPOINT|${alice_db_endpoint}|" -e "s|ALICE_DB_PASSWORD|${alice_db_password}|" \
+        -e "s|EDC_ACCESS_KEY_ID|${edc_access_key_id}|" -e "s|EDC_ACCESS_KEY_SECRET|${edc_access_key_secret}|" ../../templates/alice.tf.tpl > alice.tf
+    sed -e "s|BOB_DB_ENDPOINT|${bob_db_endpoint}|" -e "s|BOB_DB_PASSWORD|${bob_db_password}|" \
+        -e "s|EDC_ACCESS_KEY_ID|${edc_access_key_id}|" -e "s|EDC_ACCESS_KEY_SECRET|${edc_access_key_secret}|" ../../templates/bob.tf.tpl > bob.tf
+
     sed -e "s|EDC_AUTH_KEY|${edc_auth_key}|g" ../../templates/connector-values.yaml.tpl > modules/connector/values.yaml
 
-    sed -e "s|password|${edc_auth_key}|g" -i "" postman/mxd-seed.json
-#    cat ../../templates/connector-main.tf.tpl > modules/connector/main.tf
+    sed -e "s|password|${edc_auth_key}|" -i postman/mxd-seed.json
+    cat ../../templates/connector-connector.tf.tpl > modules/connector/connector.tf
+
+    sed -e "s|data-service-api:latest|${aws_ecr_registry}/${PROJECT_NAME}-data-service-api:1.0.0|"     -i data-service-api.tf
+    sed -e "s|tx-catalog-server:latest|${aws_ecr_registry}/${PROJECT_NAME}-tx-catalog-server:0.8.0|"   -i modules/catalog-server/catalog-server.tf
+    sed -e "s|tx-identityhub:latest|${aws_ecr_registry}/${PROJECT_NAME}-tx-identityhub:0.8.0|"         -i alice.tf
+    sed -e "s|tx-identityhub-sts:latest|${aws_ecr_registry}/${PROJECT_NAME}-tx-identityhub-sts:0.8.0|" -i modules/identity-hub/variables.tf
+    sed -e "s|tx-sts:latest|${aws_ecr_registry}/${PROJECT_NAME}-tx-sts:0.8.0|"                         -i modules/sts/sts.tf
+
+    grep -rl "image_pull_policy" ./ | grep -v "terraform" | xargs sed -i "s|Never|IfNotPresent|"
 
     # Deploy Tractus-X MXD
 

@@ -17,15 +17,11 @@
 #  SPDX-License-Identifier: Apache-2.0
 #
 
-module "minio" {
-  source            = "../minio"
-  humanReadableName = lower(var.humanReadableName)
-  minio-username    = var.minio-config.minio-username
-  minio-password    = var.minio-config.minio-password
-}
+
 
 resource "helm_release" "connector" {
   name              = lower(var.humanReadableName)
+  namespace         = var.namespace
   force_update      = true
   dependency_update = true
   reuse_values      = true
@@ -34,7 +30,7 @@ resource "helm_release" "connector" {
 
   repository = "https://eclipse-tractusx.github.io/charts/dev"
   chart      = "tractusx-connector"
-  version    = "0.6.0"
+  version    = "0.8.0"
 
   values = [
     file("${path.module}/values.yaml"),
@@ -47,21 +43,55 @@ resource "helm_release" "connector" {
             "-c",
             join(" && ", [
               "sleep 5",
-              "/bin/vault kv put secret/client-secret content=${local.client_secret}",
-              "/bin/vault kv put secret/aes-keys content=${local.aes_key_b64}",
-              "/bin/vault kv put secret/${var.ssi-config.oauth-secretalias} content=${var.ssi-config.oauth-clientsecret}",
-              "/bin/vault kv put secret/edc.aws.access.key content=${var.minio-config.minio-username}",
-              "/bin/vault kv put secret/edc.aws.secret.access.key content=${var.minio-config.minio-password}",
+              "/bin/vault kv put secret/edc.aws.access.key content=${var.minio-config.username}",
+              "/bin/vault kv put secret/edc.aws.secret.access.key content=${var.minio-config.password}",
               "/bin/vault kv put secret/${var.azure-account-name}-key content=${var.azure-account-key}",
               "/bin/vault kv put secret/${var.azure-account-name}-sas content='${local.azure-sas-token}'",
-              "/bin/vault kv put secret/transferProxyTokenSignerPrivateKey content='${tls_private_key.transfer_proxy_privatekey.private_key_pem}'",
-              "/bin/vault kv put secret/transferProxyTokenSignerPublicKey content='${tls_private_key.transfer_proxy_privatekey.public_key_pem}'",
             ])
           ]
         }
       }
     }),
     yamlencode({
+      controlplane : {
+        volumeMounts : [
+          {
+            name : "participants"
+            mountPath : "/app/participants.json"
+            subPath : "participants.json"
+          }
+        ]
+
+        volumes : [
+          {
+            name : "participants"
+            configMap : {
+              name : kubernetes_config_map.participants-map.metadata[0].name
+              items : [
+                {
+                  key : "participants.json"
+                  path : "participants.json"
+                }
+              ]
+            }
+          }
+        ]
+      }
+      }
+    ),
+    yamlencode({
+      iatp : {
+        id : var.dcp-config.id
+        sts : {
+          oauth : {
+            token_url : var.dcp-config.sts_token_url
+            client : {
+              id : var.dcp-config.sts_client_id
+              secret_alias : var.dcp-config.sts_clientsecret_alias
+            }
+          }
+        }
+      }
       controlplane : {
         env : {
           "TX_SSI_ENDPOINT_AUDIENCE" : "http://${kubernetes_service.controlplane-service.metadata.0.name}:8084/api/v1/dsp"
@@ -70,24 +100,38 @@ resource "helm_release" "connector" {
           "EDC_BLOBSTORE_ENDPOINT_TEMPLATE" : local.edc-blobstore-endpoint-template
           "EDC_DATAPLANE_SELECTOR_DEFAULTPLANE_SOURCETYPES" : "HttpData,AmazonS3,AzureStorage"
           "EDC_DATAPLANE_SELECTOR_DEFAULTPLANE_DESTINATIONTYPES" : "HttpProxy,AmazonS3,AzureStorage"
+          "EDC_IAM_DID_WEB_USE_HTTPS" : "false"
+          "EDC_IAM_TRUSTED-ISSUER_DATASPACE-ISSUER_ID" : "did:web:dataspace-issuer"
+          "EDC_IAM_TRUSTED-ISSUER_DATASPACE-ISSUER_SUPPORTEDTYPES" : "[\"*\"]"
+          "EDC_COMPONENT_ID" : var.humanReadableName
         }
-        ssi : {
-          miw : {
-            url : var.ssi-config.miw-url
-            authorityId : var.ssi-config.miw-authorityId
+        bdrs : {
+          server : {
+            url : "http://bdrs-server:8082/api/directory"
           }
-          oauth : {
-            tokenurl : var.ssi-config.oauth-tokenUrl
-            client : {
-              id : var.ssi-config.oauth-clientid
-              secretAlias : var.ssi-config.oauth-secretalias
-            }
+        }
+        catalog : {
+          enabled : true
+          crawler : {
+            #   num : 1
+            period : 10
+            initialDelay : 10
+            targetsFile : "/app/participants.json"
           }
         }
       }
       dataplane : {
+        token : {
+          signer : {
+            privatekey_alias : var.dataplane.privatekey-alias
+          }
+          verifier : {
+            publickey_alias : var.dataplane.publickey-alias
+          }
+        }
         env : {
           "EDC_BLOBSTORE_ENDPOINT_TEMPLATE" : local.edc-blobstore-endpoint-template
+          "EDC_IAM_DID_WEB_USE_HTTPS" : false
         }
         aws : {
           endpointOverride : ""
@@ -98,16 +142,6 @@ resource "helm_release" "connector" {
   set {
     name  = "participant.id"
     value = var.participantId
-  }
-
-  set {
-    name  = "controlplane.image.pullPolicy"
-    value = var.image-pull-policy
-  }
-
-  set {
-    name  = "dataplane.image.pullPolicy"
-    value = var.image-pull-policy
   }
 
   set {
@@ -132,23 +166,20 @@ resource "helm_release" "connector" {
 
 }
 
-resource "random_string" "kc_client_secret" {
-  length = 16
-}
+resource "kubernetes_config_map" "participants-map" {
+  metadata {
+    name      = "${var.humanReadableName}-participants"
+    namespace = var.namespace
+  }
 
-resource "random_string" "aes_key_raw" {
-  length = 16
-}
-
-resource "tls_private_key" "transfer_proxy_privatekey" {
-  algorithm = "ED25519"
+  data = {
+    "participants.json" = file(var.participant-list-file)
+  }
 }
 
 locals {
-  aes_key_b64                     = base64encode(random_string.aes_key_raw.result)
-  client_secret                   = base64encode(random_string.kc_client_secret.result)
   jdbcUrl                         = "jdbc:postgresql://${var.database-host}:${var.database-port}/${var.database-name}"
   edc-blobstore-endpoint-template = "${var.azure-url}/%s"
   azure-sas-token                 = jsonencode({ edctype = "dataspaceconnector:azuretoken", sas = var.azure-account-key-sas })
-  minio-url                       = module.minio.minio-url
+  minio-url                       = var.minio-config.url
 }

@@ -11,6 +11,8 @@ locals {
   cluster_service_cidr = "10.96.0.0/16"
   azs                  = slice(data.aws_availability_zones.available.names, 0, 3)
 
+  admin_principal = data.aws_caller_identity.current.arn
+
   tags = {
     Project = local.name
     GitRepo = "github.com/aws-samples/minimum-viable-dataspace-for-catenax"

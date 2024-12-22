@@ -72,7 +72,7 @@ module "eks" {
   access_entries = {
     admin-role = {
       kubernetes_groups = []
-      principal_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/Admin"
+      principal_arn     = local.admin_principal
 
       policy_associations = {
         cluster-admin = {
@@ -140,7 +140,7 @@ module "ebs_kms_key" {
   description = "Customer managed key to encrypt EKS managed node group volumes"
 
   key_administrators = [
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/Admin"
+    local.admin_principal
   ]
 
   key_service_roles_for_autoscaling = [
@@ -308,17 +308,19 @@ module "ecr" {
 
   source   = "git::https://github.com/terraform-aws-modules/terraform-aws-ecr.git?ref=8105d04e8b7adddef339b959103389ed53eadddc"  # commit hash of version 2.3.1
   for_each = toset([
-    "${local.name}-alice-catalogserver",
-    "${local.name}-alice-ih",
-    "${local.name}-alice-sts",
-    "${local.name}-data-service-api"
+    "${local.name}-data-service-api",
+    "${local.name}-tx-catalog-server",
+    "${local.name}-tx-identityhub",
+    "${local.name}-tx-identityhub-sts",
+    "${local.name}-tx-sts"
   ])
 
   repository_name         = each.key
   repository_force_delete = true
 
+  repository_image_tag_mutability   = "MUTABLE"
   repository_read_write_access_arns = [
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/Admin",
+    local.admin_principal,
     module.iam_user.iam_user_arn
   ]
 
@@ -326,12 +328,12 @@ module "ecr" {
     rules = [
       {
         rulePriority = 1,
-        description  = "Keep only last 3 images",
+        description  = "Keep only last 3 tagged images",
         selection = {
-          tagStatus     = "tagged",
-          tagPrefixList = ["v"],
-          countType     = "imageCountMoreThan",
-          countNumber   = 3
+          tagStatus      = "tagged",
+          tagPatternList = ["*.*.*"],
+          countType      = "imageCountMoreThan",
+          countNumber    = 3
         },
         action = {
           type = "expire"
