@@ -4,12 +4,14 @@
 locals {
 
   name            = "mvd-for-catenax"
-  cluster_version = "1.30"
+  cluster_version = "1.32"
   region          = "eu-central-1"
 
   vpc_cidr             = "192.168.0.0/16"
   cluster_service_cidr = "10.96.0.0/16"
   azs                  = slice(data.aws_availability_zones.available.names, 0, 3)
+
+  admin_principal = data.aws_caller_identity.current.arn
 
   tags = {
     Project = local.name

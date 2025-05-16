@@ -17,7 +17,7 @@ resource "random_string" "this" {
 
 module "vpc" {
 
-  source = "git::https://github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=652598fd6eb64b405e8535e807cb2f239a6da924"  # commit hash of version 5.12.1
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=7c1f791efd61f326ed6102d564d1a65d1eceedf0"  # commit hash of version 5.21.0
 
   name = local.name
   cidr = local.vpc_cidr
@@ -53,7 +53,7 @@ module "vpc" {
 
 module "eks" {
 
-  source = "git::https://github.com/terraform-aws-modules/terraform-aws-eks.git?ref=1360e3de68d4b18048477cef43d74c3dc0dd081b"  # commit hash of version 20.23.0
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-eks.git?ref=37e3348dffe06ea4b9adf9b54512e4efdb46f425"  # commit hash of version 20.36.0
 
   cluster_name                   = local.name
   cluster_version                = local.cluster_version
@@ -72,7 +72,7 @@ module "eks" {
   access_entries = {
     admin-role = {
       kubernetes_groups = []
-      principal_arn     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/Admin"
+      principal_arn     = local.admin_principal
 
       policy_associations = {
         cluster-admin = {
@@ -134,13 +134,13 @@ module "eks" {
 
 module "ebs_kms_key" {
 
-  source = "git::https://github.com/terraform-aws-modules/terraform-aws-kms.git?ref=fe1beca2118c0cb528526e022a53381535bb93cd"  # commit hash of version 3.1.0
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-kms.git?ref=c20bffd41ce9716140cb9938faf0aa147b38ca2a"  # commit hash of version 3.1.1
 
   aliases     = ["eks/${local.name}/ebs"]
   description = "Customer managed key to encrypt EKS managed node group volumes"
 
   key_administrators = [
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/Admin"
+    local.admin_principal
   ]
 
   key_service_roles_for_autoscaling = [
@@ -153,7 +153,7 @@ module "ebs_kms_key" {
 
 data "aws_rds_engine_version" "postgresql" {
   engine  = "aurora-postgresql"
-  version = "16.3"
+  version = "17.4"
 }
 
 resource "random_password" "alice" {
@@ -163,7 +163,7 @@ resource "random_password" "alice" {
 
 module "rds-aurora-alice" {
 
-  source = "git::https://github.com/terraform-aws-modules/terraform-aws-rds-aurora.git?ref=5a2ebc23062c694f7d1f315114caf02bdb1be228"  # commit hash of version 9.8.0
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-rds-aurora.git?ref=592cb15809bde8eed2a641ba5971ec665c9b4397"  # commit hash of version 9.13.0
 
   name              = "${local.name}-alice"
   engine            = data.aws_rds_engine_version.postgresql.engine
@@ -203,7 +203,7 @@ resource "random_password" "bob" {
 
 module "rds-aurora-bob" {
 
-  source = "git::https://github.com/terraform-aws-modules/terraform-aws-rds-aurora.git?ref=5a2ebc23062c694f7d1f315114caf02bdb1be228"  # commit hash of version 9.8.0
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-rds-aurora.git?ref=592cb15809bde8eed2a641ba5971ec665c9b4397"  # commit hash of version 9.13.0
 
   name              = "${local.name}-bob"
   engine            = data.aws_rds_engine_version.postgresql.engine
@@ -273,7 +273,7 @@ resource "aws_iam_policy" "edc_policy" {
 
 module "iam_user" {
 
-  source = "git::https://github.com/terraform-aws-modules/terraform-aws-iam.git//modules/iam-user?ref=89fe17a6549728f1dc7e7a8f7b707486dfb45d89"  # commit hash of version 5.44.0
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-iam.git//modules/iam-user?ref=416c5ccda8807632b505888d55ca83c3b71282a8"  # commit hash of version 5.55.0
 
   name          = local.name
   force_destroy = true
@@ -288,7 +288,7 @@ module "iam_user" {
 
 module "s3-bucket-alice" {
 
-  source = "git::https://github.com/terraform-aws-modules/terraform-aws-s3-bucket.git?ref=8a0b697adfbc673e6135c70246cff7f8052ad95a"  # commit hash of version 4.1.2
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-s3-bucket.git?ref=1eb6a5766e0a84168d6e8aed2ccfa83e667a9561"  # commit hash of version 4.9.0
 
   bucket = "${local.name}-alice-${random_string.this.id}"
 
@@ -297,7 +297,7 @@ module "s3-bucket-alice" {
 
 module "s3-bucket-bob" {
 
-  source = "git::https://github.com/terraform-aws-modules/terraform-aws-s3-bucket.git?ref=8a0b697adfbc673e6135c70246cff7f8052ad95a"  # commit hash of version 4.1.2
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-s3-bucket.git?ref=1eb6a5766e0a84168d6e8aed2ccfa83e667a9561"  # commit hash of version 4.9.0
 
   bucket = "${local.name}-bob-${random_string.this.id}"
 
@@ -363,7 +363,7 @@ resource "helm_release" "metrics_server" {
   namespace  = "kube-system"
   repository = "https://kubernetes-sigs.github.io/metrics-server/"
   chart      = "metrics-server"
-  version    = "3.12.1"
+  version    = "3.12.2"
 
   # Ensure Helm release is purged before EKS access entries are destroyed
   depends_on = [module.eks]
@@ -374,7 +374,7 @@ resource "helm_release" "ingress_nginx" {
   namespace  = "kube-system"
   repository = "https://kubernetes.github.io/ingress-nginx/"
   chart      = "ingress-nginx"
-  version    = "4.11.1"
+  version    = "4.12.2"
 
   values = [
     yamlencode({
