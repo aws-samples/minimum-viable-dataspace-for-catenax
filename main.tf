@@ -17,7 +17,7 @@ resource "random_string" "this" {
 
 module "vpc" {
 
-  source = "git::https://github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=9ffd9c66f3d7eb4b5bc2d7bc7d049f794b127693"  # commit hash of version 5.16.0
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=7c1f791efd61f326ed6102d564d1a65d1eceedf0"  # commit hash of version 5.21.0
 
   name = local.name
   cidr = local.vpc_cidr
@@ -53,7 +53,7 @@ module "vpc" {
 
 module "eks" {
 
-  source = "git::https://github.com/terraform-aws-modules/terraform-aws-eks.git?ref=97a08c8aff5dbf51a86b4c8cd88a858336cd0208"  # commit hash of version 20.29.0
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-eks.git?ref=37e3348dffe06ea4b9adf9b54512e4efdb46f425"  # commit hash of version 20.36.0
 
   cluster_name                   = local.name
   cluster_version                = local.cluster_version
@@ -153,7 +153,7 @@ module "ebs_kms_key" {
 
 data "aws_rds_engine_version" "postgresql" {
   engine  = "aurora-postgresql"
-  version = "16.4"
+  version = "17.4"
 }
 
 resource "random_password" "alice" {
@@ -163,7 +163,7 @@ resource "random_password" "alice" {
 
 module "rds-aurora-alice" {
 
-  source = "git::https://github.com/terraform-aws-modules/terraform-aws-rds-aurora.git?ref=e6b5d798630bdc9ccb17a07ce59299010df79a41"  # commit hash of version 9.10.0
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-rds-aurora.git?ref=592cb15809bde8eed2a641ba5971ec665c9b4397"  # commit hash of version 9.13.0
 
   name              = "${local.name}-alice"
   engine            = data.aws_rds_engine_version.postgresql.engine
@@ -203,7 +203,7 @@ resource "random_password" "bob" {
 
 module "rds-aurora-bob" {
 
-  source = "git::https://github.com/terraform-aws-modules/terraform-aws-rds-aurora.git?ref=e6b5d798630bdc9ccb17a07ce59299010df79a41"  # commit hash of version 9.10.0
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-rds-aurora.git?ref=592cb15809bde8eed2a641ba5971ec665c9b4397"  # commit hash of version 9.13.0
 
   name              = "${local.name}-bob"
   engine            = data.aws_rds_engine_version.postgresql.engine
@@ -273,7 +273,7 @@ resource "aws_iam_policy" "edc_policy" {
 
 module "iam_user" {
 
-  source = "git::https://github.com/terraform-aws-modules/terraform-aws-iam.git//modules/iam-user?ref=e20e0b9a42084bbc885fd5abb18b8744810bd567"  # commit hash of version 5.48.0
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-iam.git//modules/iam-user?ref=416c5ccda8807632b505888d55ca83c3b71282a8"  # commit hash of version 5.55.0
 
   name          = local.name
   force_destroy = true
@@ -288,7 +288,7 @@ module "iam_user" {
 
 module "s3-bucket-alice" {
 
-  source = "git::https://github.com/terraform-aws-modules/terraform-aws-s3-bucket.git?ref=8b855f886e3f7f27ea4cdb692c94805fdf25f9e3"  # commit hash of version 4.2.2
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-s3-bucket.git?ref=1eb6a5766e0a84168d6e8aed2ccfa83e667a9561"  # commit hash of version 4.9.0
 
   bucket = "${local.name}-alice-${random_string.this.id}"
 
@@ -297,7 +297,7 @@ module "s3-bucket-alice" {
 
 module "s3-bucket-bob" {
 
-  source = "git::https://github.com/terraform-aws-modules/terraform-aws-s3-bucket.git?ref=8b855f886e3f7f27ea4cdb692c94805fdf25f9e3"  # commit hash of version 4.2.2
+  source = "git::https://github.com/terraform-aws-modules/terraform-aws-s3-bucket.git?ref=1eb6a5766e0a84168d6e8aed2ccfa83e667a9561"  # commit hash of version 4.9.0
 
   bucket = "${local.name}-bob-${random_string.this.id}"
 
@@ -306,7 +306,7 @@ module "s3-bucket-bob" {
 
 module "ecr" {
 
-  source   = "git::https://github.com/terraform-aws-modules/terraform-aws-ecr.git?ref=8105d04e8b7adddef339b959103389ed53eadddc"  # commit hash of version 2.3.1
+  source   = "git::https://github.com/terraform-aws-modules/terraform-aws-ecr.git?ref=f475c99a68f1f3b0e0bf996d098d94c68570eab8"  # commit hash of version 2.4.0
   for_each = toset([
     "${local.name}-data-service-api",
     "${local.name}-tx-catalog-server",
@@ -343,7 +343,6 @@ module "ecr" {
   })
 
   tags = local.tags
-
 }
 
 resource "tls_private_key" "this" {
@@ -416,7 +415,7 @@ resource "helm_release" "ingress_nginx" {
   namespace  = "kube-system"
   repository = "https://kubernetes.github.io/ingress-nginx/"
   chart      = "ingress-nginx"
-  version    = "4.11.3"
+  version    = "4.12.2"
 
   values = [
     yamlencode({

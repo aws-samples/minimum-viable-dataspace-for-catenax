@@ -26,9 +26,9 @@ module "bob-connector" {
   }
   dcp-config = {
     id                     = var.bob-did
-    sts_token_url          = "http://${var.bob-identityhub-host}:7084/api/credentials/token"
+    sts_token_url          = "http://bob-ih:7084/api/sts/token"
     sts_client_id          = var.bob-did
-    sts_clientsecret_alias = "participant-bob-sts-client-secret"
+    sts_clientsecret_alias = "${var.bob-did}-sts-client-secret"
   }
   dataplane = {
     privatekey-alias = "${var.bob-did}#signing-key-1"
@@ -45,21 +45,23 @@ module "bob-connector" {
     password = "EDC_ACCESS_KEY_SECRET"
     url      = module.bob-minio.minio-url
   }
+  useSVE = var.useSVE
 }
 
 module "bob-identityhub" {
-  depends_on = [module.bob-connector]
+  depends_on = [module.bob-connector] // depends because of the vault
   source     = "./modules/identity-hub"
   database = {
-    user     = local.databases.bob.database-username
-    password = local.databases.bob.database-password
-    url      = "jdbc:postgresql://${local.bob-postgres.database-host}/${local.databases.bob.database-name}"
+    user     = "postgres"
+    password = "BOB_DB_PASSWORD"
+    url      = "jdbc:postgresql://BOB_DB_ENDPOINT/${local.databases.bob.database-name}"
   }
   humanReadableName = var.bob-identityhub-host
   namespace         = kubernetes_namespace.mxd-ns.metadata.0.name
   participantId     = var.bob-did
   vault-url         = "http://bob-vault:8200"
   url-path          = var.bob-identityhub-host
+  useSVE            = var.useSVE
 }
 
 module "bob-minio" {

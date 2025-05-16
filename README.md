@@ -1,8 +1,8 @@
 # Minimum Viable Dataspace for Catena-X on AWS
 
-In October 2023, the Catena-X Automotive Network was productively launched. [Catena-X](https://catena-x.net/) aims to create greater transparency by building a trustworthy, collaborative, open and secure data ecosystem for the automotive industry. [AWS joined Catena-X](https://aws.amazon.com/blogs/industries/aws-joins-catena-x/) as a member in January 2023.
+[Catena-X](https://catena-x.net/) aims to create greater transparency by building a trustworthy, collaborative, open and secure data ecosystem for the automotive industry. [AWS joined Catena-X](https://aws.amazon.com/blogs/industries/aws-joins-catena-x/) as a member in January 2023.
 
-This sample extends Catena-X' [Tractus-X MXD implementation](https://github.com/eclipse-tractusx/tutorial-resources/tree/main/mxd) to deploy a single-command Minimum Viable Dataspace (MVD) for Catena-X on AWS. For users, this serves as a starting point for experimentation around Catena-X onboarding, implementation against the Eclipse Dataspace Components' (EDC) API and realization of initial use cases. **This repository provides a reference implementation for Catena-X release [24.03](https://github.com/eclipse-tractusx/tractus-x-release/blob/main/CHANGELOG.md#2403---2024-03-08) on AWS.**
+This sample extends Catena-X' [Tractus-X MXD implementation](https://github.com/eclipse-tractusx/tutorial-resources/tree/main/mxd) to deploy a single-command Minimum Viable Dataspace (MVD) for Catena-X on AWS. For users, this serves as a starting point for experimentation around Catena-X onboarding, implementation against the Eclipse Dataspace Components' (EDC) APIs and evaluation of initial use cases. **This repository provides reference implementations for the Catena-X releases [24.03](https://github.com/eclipse-tractusx/tractus-x-release/blob/main/CHANGELOG.md#2403---2024-03-08) and [24.12](https://github.com/eclipse-tractusx/tractus-x-release/blob/main/CHANGELOG.md#2412---2024-12-02) on AWS.** For past versions refer to this repository's [releases](https://github.com/aws-samples/minimum-viable-dataspace-for-catenax/releases).
 
 ## Architecture
 
@@ -10,7 +10,7 @@ This sample extends Catena-X' [Tractus-X MXD implementation](https://github.com/
 
 ## Getting Started
 
-This project requires `terraform`, `aws-cli`, `kubectl` and `git` to be installed. To provision the MVD on AWS sample run
+This project requires `corretto@17`, `docker`, `terraform`, `aws-cli`, `kubectl`, `git` and optionally `helm` to be installed. To provision the MVD on AWS sample run
 
 ```bash
 ~ ./deploy.sh up
@@ -20,36 +20,51 @@ Please enter an alphanumeric string to protect access to your connector APIs.
 EDC authentication key:
 ```
 
-Enter a secret key that you would like the MVD sample to configure for access with the EDCs' control and data plane APIs and submit.
+Enter a secret key that you would like the MVD sample to configure to access the EDCs' APIs and submit.
 The deployment will take 15-20 minutes to complete. After the deployment is done, verify the installation by running
 
 ```bash
 ~ kubectl get pod
 
-NAME                                                     READY   STATUS              RESTARTS   AGE
-alice-minio-7b4b95cf79-r8jt4                             1/1     Running             0          7m13s
-alice-tractusx-connector-controlplane-7ff7b666b9-h24rm   1/1     Running             0          5m2s
-alice-tractusx-connector-dataplane-587bf89d6f-tzqmx      1/1     Running             0          5m2s
-alice-vault-0                                            1/1     Running             0          5m2s
-azurite-7cddb6c555-fjtvd                                 1/1     Running             0          7m29s
-backend-service-67dd4b974-h2x2s                          0/1     ErrImageNeverPull   0          7m13s
-bdrs-server-6f5d74c55f-m79hc                             1/1     Running             0          7m9s
-bdrs-server-vault-0                                      1/1     Running             0          7m9s
-bob-minio-54c4d656d6-j7hzh                               1/1     Running             0          7m13s
-bob-tractusx-connector-controlplane-5c94c684c-kzvtp      1/1     Running             0          5m1s
-bob-tractusx-connector-dataplane-58d6d4464d-q4f4d        1/1     Running             0          5m1s
-bob-vault-0                                              1/1     Running             0          5m1s
-common-postgres-5847467f7-n6w2m                          1/1     Running             0          7m29s
-keycloak-f8794dcb8-bxv5r                                 1/1     Running             0          7m13s
-miw-7645f67cf9-fkxbq                                     1/1     Running             0          7m13s
+NAME                                                     READY   STATUS    RESTARTS   AGE
+alice-catalogserver-58d5b55db9-lpdc9                     1/1     Running   0          3m36s
+alice-catalogserver-postgres-6fd4786898-4mnds            1/1     Running   0          6m12s
+alice-ih-b844bf6cd-dpwv8                                 1/1     Running   0          3m37s
+alice-minio-796bbc5965-hxrp4                             1/1     Running   0          6m12s
+alice-postgres-79484d5968-ccgdg                          1/1     Running   0          6m12s
+alice-sts-75f7f9d557-sz7gr                               1/1     Running   0          6m12s
+alice-tractusx-connector-controlplane-85bb9c6f6c-pgd2s   1/1     Running   0          5m44s
+alice-tractusx-connector-dataplane-cb6dd7986-dpwrb       1/1     Running   0          5m44s
+alice-vault-0                                            1/1     Running   0          5m44s
+azurite-5f6d4db54d-5knmh                                 1/1     Running   0          6m12s
+bdrs-postgres-7df445cdc6-xk8jc                           1/1     Running   0          6m12s
+bdrs-server-6d487f7794-9h6ht                             1/1     Running   0          5m44s
+bdrs-server-vault-0                                      1/1     Running   0          5m44s
+bob-ih-6686cf9457-w7vm7                                  1/1     Running   0          3m37s
+bob-minio-9c54f56f8-9ztvc                                1/1     Running   0          6m12s
+bob-postgres-68994f97fd-2xjk7                            1/1     Running   0          6m12s
+bob-tractusx-connector-controlplane-8bc45fd79-fgqdv      1/1     Running   0          5m44s
+bob-tractusx-connector-dataplane-77c89798b4-l5bq7        1/1     Running   0          5m44s
+bob-vault-0                                              1/1     Running   0          5m44s
+data-service-api-589d664459-hfb94                        1/1     Running   0          6m12s
+dataspace-issuer-server-65b999ff84-ptfvq                 1/1     Running   0          6m12s
 
 ~ kubectl get ing
 
-NAME            CLASS   HOSTS   ADDRESS                                      PORTS   AGE
-alice-ingress   nginx   *       <lb-domain>.elb.eu-central-1.amazonaws.com   80      8m14s
-bob-ingress     nginx   *       <lb-domain>.elb.eu-central-1.amazonaws.com   80      8m14s
-mxd-ingress     nginx   *       <lb-domain>.elb.eu-central-1.amazonaws.com   80      6m7s
+NAME                          CLASS   HOSTS       ADDRESS                     PORTS   AGE
+alice-connector-ingress       nginx   *           <lb-domain>.amazonaws.com   80      6m27s
+alice-cs-ingress              nginx   localhost   <lb-domain>.amazonaws.com   80      3m32s
+alice-ih-did-server-ingress   nginx   localhost   <lb-domain>.amazonaws.com   80      3m22s
+alice-ih-ingress              nginx   localhost   <lb-domain>.amazonaws.com   80      3m22s
+bob-connector-ingress         nginx   *           <lb-domain>.amazonaws.com   80      6m27s
+bob-ih-did-server-ingress     nginx   localhost   <lb-domain>.amazonaws.com   80      3m22s
+bob-ih-ingress                nginx   localhost   <lb-domain>.amazonaws.com   80      3m22s
 ```
+
+## Known issues
+
+* Vaults can't be seeded when re-deploying MXD without re-deploying the full solution, persistant DB vs. non-peristant vault causes conflicts
+* Init jobs for Azurite, MinIO, MXD seed frequently time out and result in errors that yet need to be investigated
 
 **Note: Currently, the concluding MXD deployment times out during creation of the `kubernetes_deployment.backend-service` resource, terminating with the error `Waiting for rollout to finish: 1 replicas wanted; 0 replicas Ready`. This is an expected behavior and is due to the MXD's recently added backend service requiring a local Gradle build and loading process of the resulting container image, which this project does not yet support.**
 
