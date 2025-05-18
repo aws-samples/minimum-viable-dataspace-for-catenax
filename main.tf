@@ -304,6 +304,56 @@ module "s3-bucket-bob" {
   tags = local.tags
 }
 
+module "ecr" {
+
+  source   = "git::https://github.com/terraform-aws-modules/terraform-aws-ecr.git?ref=f475c99a68f1f3b0e0bf996d098d94c68570eab8"  # commit hash of version 2.4.0
+  for_each = toset([
+    "${local.name}-backend-service"
+  ])
+
+  repository_name         = each.key
+  repository_force_delete = true
+
+  repository_image_tag_mutability   = "MUTABLE"
+  repository_read_write_access_arns = [
+    local.admin_principal,
+    module.iam_user.iam_user_arn
+  ]
+
+  repository_lifecycle_policy = jsonencode({
+    rules = [
+      {
+        rulePriority = 1,
+        description  = "Keep only last 3 tagged images",
+        selection = {
+          tagStatus      = "tagged",
+          tagPatternList = ["*.*.*"],
+          countType      = "imageCountMoreThan",
+          countNumber    = 3
+        },
+        action = {
+          type = "expire"
+        }
+      },
+      {
+        rulePriority = 2,
+        description  = "Expire all untagged images",
+        selection = {
+          tagStatus   = "untagged",
+          countType   = "sinceImagePushed",
+          countUnit   = "days",
+          countNumber = 1
+        },
+        action = {
+          type = "expire"
+        }
+      }
+    ]
+  })
+
+  tags = local.tags
+}
+
 resource "tls_private_key" "this" {
   algorithm = "RSA"
 }

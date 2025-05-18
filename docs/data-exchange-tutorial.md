@@ -178,6 +178,7 @@ curl -k --location "https://$NLB_DNS/bob/management/v2/catalog/request" \
   },
   "@type": "CatalogRequest",
   "counterPartyAddress": "http://alice-controlplane:8084/api/v1/dsp",
+  "counterPartyId": "BPNL000000000001",
   "protocol": "dataspace-protocol-http",
   "querySpec": {
     "offset": 0,
@@ -335,7 +336,7 @@ You should get an output similar to this:
     "@id": "ff2fa40c-30b9-49ad-8079-7cb484b51f58",
     "@type": "edc:TransferProcess",
     "edc:correlationId": "<TRANSFER_ID>",
-    "edc:state": "STARTED",
+    "edc:state": "COMPLETED",
     "edc:stateTimestamp": 1710329092276,
     "edc:type": "CONSUMER",
     "edc:assetId": "20",
