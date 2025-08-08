@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT-0
 
 provider "aws" {
-  region = local.region
+  region = var.region
 }
 
 data "aws_caller_identity" "current" {}
@@ -19,7 +19,7 @@ module "vpc" {
 
   source = "git::https://github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=7c1f791efd61f326ed6102d564d1a65d1eceedf0"  # commit hash of version 5.21.0
 
-  name = local.name
+  name = var.name
   cidr = local.vpc_cidr
 
   azs              = local.azs
@@ -34,11 +34,11 @@ module "vpc" {
 
   # Manage so we can name
   manage_default_network_acl    = true
-  default_network_acl_tags      = { Name = "${local.name}-default" }
+  default_network_acl_tags      = { Name = "${var.name}-default" }
   manage_default_route_table    = true
-  default_route_table_tags      = { Name = "${local.name}-default" }
+  default_route_table_tags      = { Name = "${var.name}-default" }
   manage_default_security_group = true
-  default_security_group_tags   = { Name = "${local.name}-default" }  
+  default_security_group_tags   = { Name = "${var.name}-default" }
 
   public_subnet_tags = {
     "kubernetes.io/role/elb" = 1
@@ -55,7 +55,7 @@ module "eks" {
 
   source = "git::https://github.com/terraform-aws-modules/terraform-aws-eks.git?ref=37e3348dffe06ea4b9adf9b54512e4efdb46f425"  # commit hash of version 20.36.0
 
-  cluster_name                   = local.name
+  cluster_name                   = var.name
   cluster_version                = local.cluster_version
   cluster_endpoint_public_access = true
 
@@ -129,6 +129,17 @@ module "eks" {
     }
   }
 
+  node_security_group_additional_rules = {
+    ingress_allow_80 = {
+      description = "Node to node ingress on port 80"
+      protocol    = "tcp"
+      from_port   = 80
+      to_port     = 80
+      type        = "ingress"
+      self        = true
+    }
+  }
+
   tags = local.tags
 }
 
@@ -136,7 +147,7 @@ module "ebs_kms_key" {
 
   source = "git::https://github.com/terraform-aws-modules/terraform-aws-kms.git?ref=c20bffd41ce9716140cb9938faf0aa147b38ca2a"  # commit hash of version 3.1.1
 
-  aliases     = ["eks/${local.name}/ebs"]
+  aliases     = ["eks/${var.name}/ebs"]
   description = "Customer managed key to encrypt EKS managed node group volumes"
 
   key_administrators = [
@@ -165,7 +176,7 @@ module "rds-aurora-alice" {
 
   source = "git::https://github.com/terraform-aws-modules/terraform-aws-rds-aurora.git?ref=592cb15809bde8eed2a641ba5971ec665c9b4397"  # commit hash of version 9.13.0
 
-  name              = "${local.name}-alice"
+  name              = "${var.name}-alice"
   engine            = data.aws_rds_engine_version.postgresql.engine
   engine_version    = data.aws_rds_engine_version.postgresql.version
   storage_encrypted = true
@@ -205,7 +216,7 @@ module "rds-aurora-bob" {
 
   source = "git::https://github.com/terraform-aws-modules/terraform-aws-rds-aurora.git?ref=592cb15809bde8eed2a641ba5971ec665c9b4397"  # commit hash of version 9.13.0
 
-  name              = "${local.name}-bob"
+  name              = "${var.name}-bob"
   engine            = data.aws_rds_engine_version.postgresql.engine
   engine_version    = data.aws_rds_engine_version.postgresql.version
   storage_encrypted = true
@@ -237,7 +248,7 @@ module "rds-aurora-bob" {
 }
 
 resource "aws_iam_policy" "edc_policy" {
-  name        = local.name
+  name        = var.name
   description = "Policy for EDC access to AWS services"
 
   policy = jsonencode({
@@ -275,7 +286,7 @@ module "iam_user" {
 
   source = "git::https://github.com/terraform-aws-modules/terraform-aws-iam.git//modules/iam-user?ref=416c5ccda8807632b505888d55ca83c3b71282a8"  # commit hash of version 5.55.0
 
-  name          = local.name
+  name          = var.name
   force_destroy = true
   policy_arns   = [
     aws_iam_policy.edc_policy.arn
@@ -290,7 +301,7 @@ module "s3-bucket-alice" {
 
   source = "git::https://github.com/terraform-aws-modules/terraform-aws-s3-bucket.git?ref=1eb6a5766e0a84168d6e8aed2ccfa83e667a9561"  # commit hash of version 4.9.0
 
-  bucket = "${local.name}-alice-${random_string.this.id}"
+  bucket = "${var.name}-alice-${random_string.this.id}"
 
   tags = local.tags
 }
@@ -299,7 +310,7 @@ module "s3-bucket-bob" {
 
   source = "git::https://github.com/terraform-aws-modules/terraform-aws-s3-bucket.git?ref=1eb6a5766e0a84168d6e8aed2ccfa83e667a9561"  # commit hash of version 4.9.0
 
-  bucket = "${local.name}-bob-${random_string.this.id}"
+  bucket = "${var.name}-bob-${random_string.this.id}"
 
   tags = local.tags
 }
@@ -307,9 +318,7 @@ module "s3-bucket-bob" {
 module "ecr" {
 
   source   = "git::https://github.com/terraform-aws-modules/terraform-aws-ecr.git?ref=f475c99a68f1f3b0e0bf996d098d94c68570eab8"  # commit hash of version 2.4.0
-  for_each = toset([
-    "${local.name}-backend-service"
-  ])
+  for_each = toset(var.blueprint == "mvd" ? local.mvd_repositories : local.mxd_repositories)
 
   repository_name         = each.key
   repository_force_delete = true
