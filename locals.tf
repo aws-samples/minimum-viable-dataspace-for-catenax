@@ -19,7 +19,9 @@ locals {
     "${var.name}-controlplane",
     "${var.name}-dataplane",
     "${var.name}-identity-hub",
-    "${var.name}-issuerservice"
+    "${var.name}-issuerservice",
+
+    "${var.name}-data-dashboard"
   ]
 
   tags = {

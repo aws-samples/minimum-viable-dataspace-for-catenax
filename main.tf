@@ -129,6 +129,7 @@ module "eks" {
     }
   }
 
+  # Needed for 'dataspace-issuer' service ingress for MVD blueprint
   node_security_group_additional_rules = {
     ingress_allow_80 = {
       description = "Node to node ingress on port 80"

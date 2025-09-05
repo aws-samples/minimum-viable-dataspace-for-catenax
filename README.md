@@ -6,7 +6,7 @@ This sample extends Catena-X' [Tractus-X MXD implementation](https://github.com/
 
 ## Architecture
 
-![architecture diagram](img/mvd-for-catenax.png)
+![architecture diagram](img/blueprint-architecture-mxd.png)
 
 ## Getting Started
 
@@ -81,6 +81,13 @@ terraform destroy --auto-approve && sleep 5 && terraform apply --auto-approve
 Redeploying the Tractus-X MXD to the Kubernetes cluster should take less than 5 minutes to complete.
 
 ## Backlog
+
+### MVD
+
+* **Integrate MVD with Aurora PostgreSQL and S3**
+* Include DataDashboard support for federated catalogs and fix `publicUrl` adjustment for `HttpData-PULL` transfers
+
+### MXD
 
 * Fix conflicts of various seed jobs during (repeated) MXD deployment
   * Error: job: default/bob-azurite-init is not in complete state

@@ -12,11 +12,14 @@ NC="\033[0m"
 AWS_REGION="eu-central-1"
 PROJECT_NAME="mvd-on-aws"
 
-# Tractus-X - MXD state from 2024-08-13
+# Tractus-X state from 2024-08-13 for MXD
 MXD_COMMIT="8795f19273471194f092f1d1c618d780c69f2a4b"
 
-# Eclipse   - MVD state from 2025-04-07
+# Eclipse   state from 2025-04-07 for MVD
 MVD_COMMIT="140f18c8f79d035bd42fb38e621f7a345f177875"
+
+# Eclipse   state from 2025-08-19 for DataDashboard
+DATA_DASHBOARD_COMMIT="e6ec41901c944d3d94cbb5ba7291d6d2b3f1e8d5"
 
 # ---
 
@@ -189,6 +192,31 @@ function deploy_blueprint_mvd {
     sed -e "s|NLB_ADDRESS|${nlb_address}|g" ../templates/mvd/seed-k8s.sh.tpl > seed-k8s.sh
 
     ./seed-k8s.sh
+
+    # Deploy Eclipse DataDashboard
+
+    cd ../
+
+    if [ ! -d "DataDashboard" ]; then
+        git clone https://github.com/eclipse-edc/DataDashboard.git
+    fi
+
+    cd DataDashboard/
+    git checkout "${DATA_DASHBOARD_COMMIT}"
+
+    # Build DataDashboard container image
+
+    export DATA_DASHBOARD_APP_CONFIG=$(cat public/config/app-config.json | sed '2,$s/^/    /')
+    export DATA_DASHBOARD_IMAGE="${aws_ecr_registry}/${PROJECT_NAME}-data-dashboard:0.3.0"
+    export DATA_DASHBOARD_NGINX_CONFIG=$(cat nginx.conf | sed '2,$s/^/    /')
+    export EDC_AUTH_KEY="${edc_auth_key}"
+    export NLB_ADDRESS="${nlb_address}"
+
+    docker build -t "${DATA_DASHBOARD_IMAGE}" .
+    docker push "${DATA_DASHBOARD_IMAGE}"
+
+    envsubst < ../templates/data-dashboard/deploy.yaml.tpl > deploy.yaml
+    kubectl apply -f deploy.yaml
 }
 
 function delete_mvd {
@@ -198,6 +226,7 @@ function delete_mvd {
 
     if [ -d "tutorial-resources" ];     then rm -rf tutorial-resources; fi
     if [ -d "MinimumViableDataspace" ]; then rm -rf MinimumViableDataspace; fi
+    if [ -d "DataDashboard" ];          then rm -rf DataDashboard; fi
 
     echo -e "${CY}Minimum Viable Dataspace on AWS was deleted successfully.${NC}"
 }
