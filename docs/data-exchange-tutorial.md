@@ -1,17 +1,19 @@
 # Data Exchange Walk-Through
 
+**Note:** This walk-through was created to follow along the blog post *[Rapidly experimenting with Catena-X data space technology on AWS](https://aws.amazon.com/blogs/industries/rapidly-experimenting-with-catena-x-data-space-technology-on-aws/)*. In this case you need to use the `mxd` blueprint for deployment. Detailed steps can be found below.
+
 ## Step 1: Environment Setup
 
 Inside the cloned repository, run the ```./deploy.sh``` script, which will use the default AWS CLI settings to deploy the MVD using Terraform. The deployment will take 15-20 minutes to complete. When prompted, provide a secret API key and store it as an environment variable:
 
 ```bash
-./deploy.sh up
+./deploy.sh up mxd
 ```
 ```bash
 export API_KEY=<SECRET_API_KEY>
 ```
 
-The deployment defaults to the ```eu-central-1``` (Frankfurt) region but can be changed in ```./locals.tf``` and ```./deploy.sh```. After it’s deployed, the script will print the Alice and Bob Amazon S3 bucket names - store these in variables:
+The deployment defaults to the ```eu-central-1``` (Frankfurt) region but can be changed in ```./deploy.sh```. After it’s deployed, the script will print the Alice and Bob Amazon S3 bucket names - store these in variables:
 
 ```bash
 export ALICE_BUCKET=<ALICE_BUCKET_NAME>

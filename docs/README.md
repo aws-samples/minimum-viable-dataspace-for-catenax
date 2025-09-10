@@ -1,12 +1,12 @@
 # Tractus-X EDC on AWS
 
-This page provides further details on [Tractus-X EDC](https://github.com/eclipse-tractusx/tractusx-edc), its APIs and available AWS Cloud service integrations. While EDC is a modular software with a number of extensions available, only a subset are included by default into its Tractus-X variant. [This document](https://github.com/eclipse-tractusx/tractusx-edc/tree/main/docs/development/decision-records/2023-08-24-proprietrary-extensions) from 2023-08-24, describes the decision to include support for [Amazon S3](https://aws.amazon.com/s3/) as one initial proprietary extension. Tractus-X EDC also comes with a number of [custom extensions](https://github.com/eclipse-tractusx/tractusx-edc/tree/main/edc-extensions) that are specific to Catena-X.
+This page provides further details on [Tractus-X EDC](https://github.com/eclipse-tractusx/tractusx-edc), its APIs and available AWS service integrations. While EDC is a modular software with a number of extensions available, only a subset are included by default into its Tractus-X variant. As of 2025, support for [Amazon S3](https://aws.amazon.com/s3/) is included as part of an initial set of extensions. Tractus-X EDC also comes with a number of [custom extensions](https://github.com/eclipse-tractusx/tractusx-edc/tree/main/edc-extensions) that are specific to Catena-X.
 
 The Tractus-X EDC REST API documentation is available on SwaggerHub:
 
-* https://app.swaggerhub.com/apis/eclipse-tractusx-bot/tractusx-edc/0.6.0
+* https://app.swaggerhub.com/apis/eclipse-tractusx-bot/tractusx-edc/0.9.0
 
-For the [vanilla EDC connector](https://github.com/eclipse-edc/Connector), there are extensions available for both Amazon S3 and [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/), located in a [dedicated EDC repository](https://github.com/eclipse-edc/Technology-Aws) to which AWS has contributed. Tractus-X EDC to date only bundles the S3 extension and does not yet support AWS Secrets Manager with the default images provided. Recent additions to both EDC's and Digital Twin Registry's (DTR) AWS integrations include:
+For the [Eclipse EDC connector](https://github.com/eclipse-edc/Connector), there are extensions available for both Amazon S3 and [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/), located in a [dedicated repository](https://github.com/eclipse-edc/Technology-Aws) to which AWS has contributed. Tractus-X EDC to date only bundles the S3 extension and does not yet support AWS Secrets Manager with the default images provided. Recent additions to both EDC's and Digital Twin Registry's (DTR) AWS integrations include:
 
 * Support for [prefix-based data transfer](https://github.com/eclipse-edc/Technology-Aws/pull/104) over S3 by introducing a new `keyPrefix` property within a `DataAddress` configuration
 * Support for [Amazon Cognito](https://aws.amazon.com/cognito/) as an alternative to Keycloak in Digital Twin Registry ([PR is still open](https://github.com/eclipse-tractusx/sldt-digital-twin-registry/pull/400))

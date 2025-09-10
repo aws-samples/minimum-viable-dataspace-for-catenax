@@ -461,3 +461,62 @@ resource "helm_release" "ingress_nginx" {
   # Ensure Helm release is purged before EKS access entries are destroyed
   depends_on = [module.eks]
 }
+
+resource "kubernetes_config_map" "aurora_multi_db_init_bob" {
+  count = var.blueprint == "mvd" ? 1 : 0
+
+  metadata {
+    name      = "aurora-multi-db-init-bob"
+    namespace = "default"
+  }
+  data = {
+    "init.sql" = <<-EOT
+      CREATE DATABASE qna;
+      CREATE DATABASE manufacturing;
+      CREATE DATABASE identity;
+    EOT
+  }
+}
+
+resource "kubernetes_job" "aurora_multi_db_init_bob" {
+  count = var.blueprint == "mvd" ? 1 : 0
+  depends_on = [module.rds-aurora-bob.cluster_instances]
+
+  metadata {
+    name      = "aurora-multi-db-init-bob"
+    namespace = "default"
+  }
+  spec {
+    template {
+      metadata {}
+      spec {
+        container {
+          name  = "postgres-client"
+          image = "postgres:17.4"
+          command = ["psql"]
+          args = [
+            "-h", module.rds-aurora-bob.cluster_endpoint,
+            "-U", "postgres",
+            "-d", "bob",
+            "-f", "/scripts/init.sql"
+          ]
+          env {
+            name  = "PGPASSWORD"
+            value = random_password.bob.result
+          }
+          volume_mount {
+            name       = "init-scripts"
+            mount_path = "/scripts"
+          }
+        }
+        volume {
+          name = "init-scripts"
+          config_map {
+            name = kubernetes_config_map.aurora_multi_db_init_bob[0].metadata[0].name
+          }
+        }
+        restart_policy = "Never"
+      }
+    }
+  }
+}

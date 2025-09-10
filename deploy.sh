@@ -15,8 +15,8 @@ PROJECT_NAME="mvd-on-aws"
 # Tractus-X state from 2024-08-13 for MXD
 MXD_COMMIT="8795f19273471194f092f1d1c618d780c69f2a4b"
 
-# Eclipse   state from 2025-04-07 for MVD
-MVD_COMMIT="140f18c8f79d035bd42fb38e621f7a345f177875"
+# Eclipse   state from 2025-08-27 for MVD
+MVD_COMMIT="a3409a3c85505e426590be5576309fa7a4a44cfc"
 
 # Eclipse   state from 2025-08-19 for DataDashboard
 DATA_DASHBOARD_COMMIT="e6ec41901c944d3d94cbb5ba7291d6d2b3f1e8d5"
@@ -123,6 +123,9 @@ function deploy_blueprint_mxd {
     # Fix 'Prefix' path_type - ingress contains invalid paths: path /miw(/|$)(.*) cannot be used with pathType Prefix
     sed -i "34d" ingress.tf
 
+    # Pin Terraform Helm provider version of Tractus-X MXD to v2.x.x
+    sed -i "24i\      version = \"< 3.0.0\"" main.tf
+
     # Deploy Tractus-X MXD
 
     terraform init
@@ -139,6 +142,9 @@ function deploy_blueprint_mvd {
     cd MinimumViableDataspace/
     git checkout "${MVD_COMMIT}"
 
+    # Cherry pick post-release fix of EDC build
+    git cherry-pick 08cfb3604e8b93981e8205d2c8f416c51c963a6b
+
     # Build MVD container images
 
     ./gradlew build
@@ -151,33 +157,35 @@ function deploy_blueprint_mvd {
 
     aws ecr get-login-password --region "${AWS_REGION}" | docker login --username AWS --password-stdin "${aws_ecr_registry}"
 
-    docker tag issuerservice:0.12.0  "${aws_ecr_registry}/${PROJECT_NAME}-issuerservice:0.12.0"
-    docker tag identity-hub:0.12.0   "${aws_ecr_registry}/${PROJECT_NAME}-identity-hub:0.12.0"
-    docker tag dataplane:0.12.0      "${aws_ecr_registry}/${PROJECT_NAME}-dataplane:0.12.0"
-    docker tag controlplane:0.12.0   "${aws_ecr_registry}/${PROJECT_NAME}-controlplane:0.12.0"
-    docker tag catalog-server:0.12.0 "${aws_ecr_registry}/${PROJECT_NAME}-catalog-server:0.12.0"
+    docker tag issuerservice:0.14.0  "${aws_ecr_registry}/${PROJECT_NAME}-issuerservice:0.14.0"
+    docker tag identity-hub:0.14.0   "${aws_ecr_registry}/${PROJECT_NAME}-identity-hub:0.14.0"
+    docker tag dataplane:0.14.0      "${aws_ecr_registry}/${PROJECT_NAME}-dataplane:0.14.0"
+    docker tag controlplane:0.14.0   "${aws_ecr_registry}/${PROJECT_NAME}-controlplane:0.14.0"
+    docker tag catalog-server:0.14.0 "${aws_ecr_registry}/${PROJECT_NAME}-catalog-server:0.14.0"
 
-    docker push "${aws_ecr_registry}/${PROJECT_NAME}-issuerservice:0.12.0"
-    docker push "${aws_ecr_registry}/${PROJECT_NAME}-identity-hub:0.12.0"
-    docker push "${aws_ecr_registry}/${PROJECT_NAME}-dataplane:0.12.0"
-    docker push "${aws_ecr_registry}/${PROJECT_NAME}-controlplane:0.12.0"
-    docker push "${aws_ecr_registry}/${PROJECT_NAME}-catalog-server:0.12.0"
+    docker push "${aws_ecr_registry}/${PROJECT_NAME}-issuerservice:0.14.0"
+    docker push "${aws_ecr_registry}/${PROJECT_NAME}-identity-hub:0.14.0"
+    docker push "${aws_ecr_registry}/${PROJECT_NAME}-dataplane:0.14.0"
+    docker push "${aws_ecr_registry}/${PROJECT_NAME}-controlplane:0.14.0"
+    docker push "${aws_ecr_registry}/${PROJECT_NAME}-catalog-server:0.14.0"
 
     # Adjust MVD templates
 
     cd deployment/
     grep -rl "\"password\"" ./ | grep -v "terraform" | xargs sed -ie "s|\"password\"|\"${edc_auth_key}\"|g"
 
-    # Pin Terraform Helm provider version of Eclipse MVD to v2.x.x
-    sed -i "33i\      version = \"< 3.0.0\"" main.tf
-
-    sed -e "s|issuerservice:latest|${aws_ecr_registry}/${PROJECT_NAME}-issuerservice:0.12.0|"   -i modules/issuer/main.tf
-    sed -e "s|identity-hub:latest|${aws_ecr_registry}/${PROJECT_NAME}-identity-hub:0.12.0|"     -i modules/identity-hub/main.tf
-    sed -e "s|dataplane:latest|${aws_ecr_registry}/${PROJECT_NAME}-dataplane:0.12.0|"           -i modules/connector/dataplane.tf
-    sed -e "s|controlplane:latest|${aws_ecr_registry}/${PROJECT_NAME}-controlplane:0.12.0|"     -i modules/connector/controlplane.tf
-    sed -e "s|catalog-server:latest|${aws_ecr_registry}/${PROJECT_NAME}-catalog-server:0.12.0|" -i modules/catalog-server/catalog-server.tf
+    sed -e "s|issuerservice:latest|${aws_ecr_registry}/${PROJECT_NAME}-issuerservice:0.14.0|"   -i modules/issuer/main.tf
+    sed -e "s|identity-hub:latest|${aws_ecr_registry}/${PROJECT_NAME}-identity-hub:0.14.0|"     -i modules/identity-hub/main.tf
+    sed -e "s|dataplane:latest|${aws_ecr_registry}/${PROJECT_NAME}-dataplane:0.14.0|"           -i modules/connector/dataplane.tf
+    sed -e "s|controlplane:latest|${aws_ecr_registry}/${PROJECT_NAME}-controlplane:0.14.0|"     -i modules/connector/controlplane.tf
+    sed -e "s|catalog-server:latest|${aws_ecr_registry}/${PROJECT_NAME}-catalog-server:0.14.0|" -i modules/catalog-server/catalog-server.tf
 
     grep -rl "image_pull_policy" ./ | grep -v "terraform" | xargs sed -i "s|Never|IfNotPresent|"
+
+    sed -e "s|ALICE_DB_ENDPOINT|${alice_db_endpoint}|g" -e "s|ALICE_DB_PASSWORD|${alice_db_password}|g" ../../templates/mvd/consumer.tf.tpl > consumer.tf
+    sed -e "s|BOB_DB_ENDPOINT|${bob_db_endpoint}|g"     -e "s|BOB_DB_PASSWORD|${bob_db_password}|g"     ../../templates/mvd/provider.tf.tpl > provider.tf
+
+    rm -f outputs.tf
 
     # Deploy Eclipse MVD
 
@@ -187,8 +195,7 @@ function deploy_blueprint_mvd {
     kubectl config set-context --current --namespace=mvd
     cd ../
 
-    sleep 5
-    nlb_address=$(kubectl get ing | awk 'NR==2 { print $4 }')
+    until nlb_address=$(kubectl get ing | awk 'NR==2 { print $4 }') && [ "$nlb_address" != "80" ]; do sleep 2; done
     sed -e "s|NLB_ADDRESS|${nlb_address}|g" ../templates/mvd/seed-k8s.sh.tpl > seed-k8s.sh
 
     ./seed-k8s.sh

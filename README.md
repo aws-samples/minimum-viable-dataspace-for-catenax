@@ -1,8 +1,10 @@
-# Minimum Viable Dataspace for Catena-X on AWS
+# Minimum Viable Dataspace on AWS
 
 The Catena-X Automotive Network e.V. ([Catena-X](https://catena-x.net/) supports the automotive industry’s transition from peer-to-peer data exchange to an interoperable, transparent network leveraging open standards and industry collaboration. Catena-X is an automotive consortium formed by European automakers and their suppliers focused on creating an automotive-specific “data space”, i.e. a space for decentralized data sharing. The Catena-X data space is designed to improve information flow across the automotive value chain. Catena-X promotes a federated architecture, similar to data a mesh, where providers retain data control and sovereignty, sharing only metadata through a decentralized catalog. Data exchange via Catena-X occurs directly between partners, adhering to usage policies that are contractually agreed on.
 
-This sample extends Catena-X' [Tractus-X MXD implementation](https://github.com/eclipse-tractusx/tutorial-resources/tree/main/mxd) to deploy a single-command Minimum Viable Dataspace (MVD) for Catena-X on AWS. For users, this serves as a starting point for experimentation on Catena-X onboarding, implementation against the Eclipse Dataspace Components' (EDC) APIs and testing of initial use cases. **This branch provides a reference implementation for Catena-X release [24.03](https://github.com/eclipse-tractusx/tractus-x-release/blob/main/CHANGELOG.md#2403---2024-03-08) on AWS.**
+This project extends Catena-X' [Tractus-X MXD implementation](https://github.com/eclipse-tractusx/tutorial-resources/tree/main/mxd) to deploy a single-command Minimum Viable Dataspace (MVD) for Catena-X on AWS. For users, this serves as a starting point for experimentation on Catena-X onboarding, implementation against the Eclipse Dataspace Components' (EDC) APIs and testing of initial use cases. **This branch provides a reference implementation for Catena-X release [24.03](https://github.com/eclipse-tractusx/tractus-x-release/blob/main/CHANGELOG.md#2403---2024-03-08) on AWS.**
+
+Beyond Catena-X, sovereign data sharing is emerging as a requirement across countries and industries. This project accelerates data space experimentation and evaluation of use cases by making reference implementations created under the Eclipse Foundation available as single-command deployment blueprints on AWS. In the case of the `mvd` blueprint this includes a web application through which data discovery, contract negotiation and transfers across 2 fictional organizations can be explored in a visual manner.
 
 ## Architecture
 
@@ -10,12 +12,22 @@ This sample extends Catena-X' [Tractus-X MXD implementation](https://github.com/
 
 ## Getting Started
 
-This project requires `corretto@17`, `docker`, `terraform`, `aws-cli`, `kubectl`, `git` and optionally `helm` to be installed. To provision the MVD for Catena-X on AWS run
+This project requires additional dependencies to be installed for MVD deployment
+
+* `corretto@17` and `docker` to build EDC components and container images
+* `terraform`, `aws-cli` and `kubectl` to deploy AWS infrastructure and Kubernetes resources
+* `git` to access relevant GitHub projects (Eclipse MVD, Eclipse DataDashboard, Tractus-X MXD)
+
+*Minimum Viable Dataspace on AWS* comes with support for two data space blueprints: [Eclipse MVD](https://github.com/eclipse-edc/MinimumViableDataspace) and [Tractus-X MXD](https://github.com/eclipse-tractusx/tutorial-resources/tree/main/mxd). By default, the `mvd` blueprint should be used unless the Catena-X specific implementation of the `mxd` blueprint is of interest.
+
+**Note:** If you're accessing this repository to follow along the blog post *[Rapidly experimenting with Catena-X data space technology on AWS](https://aws.amazon.com/blogs/industries/rapidly-experimenting-with-catena-x-data-space-technology-on-aws/)* you need to use the `mxd` blueprint for deployment. Detailed steps can be found in our [Data Exchange Walk-Through](https://github.com/aws-samples/minimum-viable-dataspace-for-catenax/blob/main/docs/data-exchange-tutorial.md).
+
+To provision the `mvd` data space blueprint on AWS run
 
 ```bash
-~ ./deploy.sh up
+~ ./deploy.sh up mvd
 
-Creating Minimum Viable Dataspace for Catena-X on AWS...
+Creating Minimum Viable Dataspace on AWS...
 Please enter an alphanumeric string to protect access to your connector APIs.
 EDC authentication key:
 ```
@@ -26,50 +38,56 @@ The deployment will take 15-20 minutes to complete. After the deployment is done
 ```bash
 ~ kubectl get pod
 
-NAME                                                     READY   STATUS    RESTARTS   AGE
-alice-minio-74c9658b78-55gfw                             1/1     Running   0          5m33s
-alice-tractusx-connector-controlplane-86d7dc59c9-x8984   1/1     Running   0          3m6s
-alice-tractusx-connector-dataplane-79b7b667dd-9wg2t      1/1     Running   0          3m6s
-alice-vault-0                                            1/1     Running   0          3m6s
-azurite-5f6d4db54d-s4ptw                                 1/1     Running   0          5m49s
-backend-service-74b8fc4bb9-2d4nn                         1/1     Running   0          5m33s
-bdrs-server-6bdbc76b9b-tg4tf                             1/1     Running   0          5m32s
-bdrs-server-vault-0                                      1/1     Running   0          5m32s
-bob-minio-6685d4664f-f8vnc                               1/1     Running   0          5m33s
-bob-tractusx-connector-controlplane-67ddfc4bf7-z568h     1/1     Running   0          3m5s
-bob-tractusx-connector-dataplane-64d9c7b94b-xxbdf        1/1     Running   0          3m5s
-bob-vault-0                                              1/1     Running   0          3m5s
-common-postgres-664f7f445d-sgbbv                         1/1     Running   0          5m49s
-keycloak-6884cb566f-pxr59                                1/1     Running   0          5m33s
-miw-64f8f68996-wwp5c                                     1/1     Running   0          5m33s
+NAME                                                   READY   STATUS    RESTARTS   AGE
+consumer-controlplane-75fcb7bb6d-pj65b                 1/1     Running   0          2m13s
+consumer-dataplane-78444656f7-msjcn                    1/1     Running   0          107s
+consumer-identityhub-576f45f8f-qt757                   1/1     Running   0          2m49s
+consumer-vault-0                                       1/1     Running   0          2m51s
+data-dashboard-59f55d784f-kwmmx                        1/1     Running   0          66s
+dataspace-issuer-server-65b999ff84-p5tvg               1/1     Running   0          2m52s
+dataspace-issuer-service-64885d858-g2l98               1/1     Running   0          2m36s
+issuer-postgres-6cfc666468-hlqjv                       1/1     Running   0          2m52s
+provider-catalog-server-646995c96b-666mv               1/1     Running   0          2m13s
+provider-identityhub-84dbd6559d-c87p8                  1/1     Running   0          2m49s
+provider-manufacturing-controlplane-7fd4bcb986-s7dkv   1/1     Running   0          2m13s
+provider-manufacturing-dataplane-597b594d47-n66dc      1/1     Running   0          107s
+provider-qna-controlplane-6448d7b4d6-t4s9s             1/1     Running   0          2m13s
+provider-qna-dataplane-658bc7788c-qlprf                1/1     Running   0          107s
+provider-vault-0                                       1/1     Running   0          2m51s
 
 ~ kubectl get ing
 
-NAME            CLASS   HOSTS   ADDRESS                                      PORTS   AGE
-alice-ingress   nginx   *       <lb-domain>.elb.eu-central-1.amazonaws.com   80      5m39s
-bob-ingress     nginx   *       <lb-domain>.elb.eu-central-1.amazonaws.com   80      5m39s
-mxd-ingress     nginx   *       <lb-domain>.elb.eu-central-1.amazonaws.com   80      3m13s
+NAME                                   CLASS   HOSTS   ADDRESS                                       PORTS   AGE
+consumer-did-ingress                   nginx   *        <lb-domain>.elb.eu-central-1.amazonaws.com   80      2m16s
+consumer-identityhub-ingress           nginx   *        <lb-domain>.elb.eu-central-1.amazonaws.com   80      2m16s
+consumer-ingress                       nginx   *        <lb-domain>.elb.eu-central-1.amazonaws.com   80      85s
+data-dashboard                         nginx   *        <lb-domain>.elb.eu-central-1.amazonaws.com   80      69s
+dataspace-issuer-service-did-ingress   nginx   *        <lb-domain>.elb.eu-central-1.amazonaws.com   80      2m14s
+dataspace-issuer-service-ingress       nginx   *        <lb-domain>.elb.eu-central-1.amazonaws.com   80      2m14s
+provider-catalog-server-ingress        nginx   *        <lb-domain>.elb.eu-central-1.amazonaws.com   80      110s
+provider-did-ingress                   nginx   *        <lb-domain>.elb.eu-central-1.amazonaws.com   80      2m16s
+provider-identityhub-ingress           nginx   *        <lb-domain>.elb.eu-central-1.amazonaws.com   80      2m16s
+provider-manufacturing-ingress         nginx   *        <lb-domain>.elb.eu-central-1.amazonaws.com   80      95s
+provider-qna-ingress                   nginx   *        <lb-domain>.elb.eu-central-1.amazonaws.com   80      85s
 ```
 
-All pods should be in a ready state, the seeding jobs should complete successfully. Next, use this project's [Insomnia](https://github.com/aws-samples/minimum-viable-dataspace-for-catenax/tree/main/insomnia) file as a starting point to perform API operations against the MVD's EDC connectors. For further information about the MVD and its components on AWS refer to this repository's [docs section](https://github.com/aws-samples/minimum-viable-dataspace-for-catenax/tree/main/docs). For an end-to-end walkthrough explaining the deployment and initial use of this sample please refer to the blog post *[Rapidly experimenting with Catena-X data space technology on AWS](https://aws.amazon.com/blogs/industries/rapidly-experimenting-with-catena-x-data-space-technology-on-aws/)*.
+The included [EDC Data Dashboard](https://github.com/eclipse-edc/DataDashboard) will be accessible under `https://<lb-domain>.elb.eu-central-1.amazonaws.com/dashboard/`.
+
+All pods should be in a ready state, the seeding jobs should complete successfully. Next, use this project's [Insomnia](https://github.com/aws-samples/minimum-viable-dataspace-for-catenax/tree/main/insomnia) file as a starting point to perform API operations against the MVD's EDC connectors. For further information about the MVD and its components on AWS refer to this repository's [docs section](https://github.com/aws-samples/minimum-viable-dataspace-for-catenax/tree/main/docs). For an end-to-end walkthrough explaining the deployment and initial use of the `mxd` blueprint please refer to the blog post *[Rapidly experimenting with Catena-X data space technology on AWS](https://aws.amazon.com/blogs/industries/rapidly-experimenting-with-catena-x-data-space-technology-on-aws/)*.
 
 ## Considerations for Production
 
-The default resource configuration of this project is not indended for use in a production scenario. It is intended as a starting point for rapid Catena-X and data space experimentation and prototyping, that has to be adapted depending on how it is being used. For design principles and best practices on implementing a production-grade workload on AWS please refer to the [AWS Well-Architected Framework](https://docs.aws.amazon.com/wellarchitected/latest/framework/welcome.html).
+The default resource configuration of this project is not indended for use in a production scenario. It is intended as a starting point for rapid Catena-X and data space experimentation and prototyping, that has to be adapted depending on how it is being used. For design principles and best practices on implementing production-grade workloads on AWS please refer to the [AWS Well-Architected Framework](https://docs.aws.amazon.com/wellarchitected/latest/framework/welcome.html).
 
 ### Configuration
 
-The MVD's EDC connectors are exposed over HTTPS through a [Network Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/network/introduction.html) that is provisioned by the Kubernetes ingress controller. Initially, this project creates a self-signed X.509 certificate that is valid for 30 days and is being exposed to the NLB through [AWS Certificate Manager](https://docs.aws.amazon.com/elasticloadbalancing/latest/network/create-tls-listener.html) (ACM). You can replace this initial certificate by requesting or importing a new one through ACM, and adjusting the NLB's listener configuration accordingly.
+The MVD's EDC connectors and DataDashboard are exposed over HTTPS through a [Network Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/network/introduction.html) that is provisioned by the Kubernetes ingress controller. Initially, this project creates a self-signed X.509 certificate that is valid for 30 days and is being exposed to the NLB through [AWS Certificate Manager](https://docs.aws.amazon.com/elasticloadbalancing/latest/network/create-tls-listener.html) (ACM). You can replace this initial certificate by requesting or importing a new one through ACM, and adjusting the NLB's listener configuration accordingly.
 
-The MVD's EDC connectors come with key-based authentication for both their control and data planes that can be configured in this project's [`values.yaml.tpl`](https://github.com/aws-samples/minimum-viable-dataspace-for-catenax/blob/main/templates/values.yaml.tpl) template file. This key then has to be provided as an HTTP header `x-api-key` with every API call to one of the EDCs.
+The MVD's EDC connectors come with API key-based authentication for both their control and data planes that is configured as part of this project's [`deploy.sh`](https://github.com/aws-samples/minimum-viable-dataspace-for-catenax/blob/main/deploy.sh) dialog. This API key then has to be provided as an HTTP header `x-api-key` with each call to one of the EDCs' APIs.
 
 ## Troubleshooting
 
-### EDC data transfer ignores `keyName` property in `dataDestination`, instead takes the object key defined by the source
-
-See https://github.com/eclipse-edc/Technology-Aws/issues/238 - this is an intended behavior which was introduced with the `keyPrefix` property.
-
-### EDC data catalog requests are no longer working, resulting in timeouts and authentication errors
+### MXD data catalog requests are no longer working, resulting in timeouts and authentication errors
 
 In case of EDC data catalog request timeouts, a quick remediation can be to redeploy the MXD. This can be done with the following commands
 
@@ -84,16 +102,13 @@ Redeploying the Tractus-X MXD to the Kubernetes cluster should take less than 5 
 
 ### MVD
 
-* **Integrate MVD with Aurora PostgreSQL and S3**
+* Customize EDC Gradle build to include extensions for Amazon S3 and AWS Secrets Manager
 * Include DataDashboard support for federated catalogs and fix `publicUrl` adjustment for `HttpData-PULL` transfers
 
 ### MXD
 
-* Fix conflicts of various seed jobs during (repeated) MXD deployment
-  * Error: job: default/bob-azurite-init is not in complete state
-  * Error: job: default/alice-azurite-init is not in complete state
-  * MXD seed job idempotency
-* Include HTTP backend service to be used in addition to Amazon S3 for `DataAddress` definitions
+* Evaluate whether latest Tractus-X MXD code has been fixed
+* Fix conflicts of seed jobs during (repeated) MXD deployment
 * Include decentral [Digital Twin Registry](https://github.com/eclipse-tractusx/tutorial-resources/issues/50) into MVD deployment
 
 ## Security
