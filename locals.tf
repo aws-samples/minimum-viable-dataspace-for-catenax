@@ -3,7 +3,7 @@
 
 locals {
 
-  cluster_version = "1.32"
+  cluster_version = "1.34"
   admin_principal = data.aws_caller_identity.current.arn
 
   vpc_cidr             = "192.168.0.0/16"

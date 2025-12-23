@@ -13,13 +13,14 @@ AWS_REGION="eu-central-1"
 PROJECT_NAME="mvd-on-aws"
 
 # Tractus-X state from 2024-08-13 for MXD
+# TODO migrate to https://github.com/eclipse-tractusx/tractus-x-umbrella
 MXD_COMMIT="8795f19273471194f092f1d1c618d780c69f2a4b"
 
-# Eclipse   state from 2025-08-27 for MVD
-MVD_COMMIT="a3409a3c85505e426590be5576309fa7a4a44cfc"
+# Eclipse   state from 2025-10-29 for MVD (0.14.1)
+MVD_COMMIT="e3ccd83bb620e0766c37f333f21acdaf4adcabe1"
 
-# Eclipse   state from 2025-08-19 for DataDashboard
-DATA_DASHBOARD_COMMIT="e6ec41901c944d3d94cbb5ba7291d6d2b3f1e8d5"
+# Eclipse   state from 2025-12-02 for DataDashboard
+DATA_DASHBOARD_COMMIT="4921ba32c97ac8b074f7ffc8693300d4971ce329"
 
 # ---
 
@@ -82,6 +83,9 @@ function create_mvd {
 
 function deploy_blueprint_mxd {
     # Clone Tractus-X MXD repository and pin commit
+    echo "The Tractus-X MXD project is no longer maintained, hence this blueprint was deprecated."
+    echo "If you still wish to deploy the 'mxd' blueprint, manually comment the below L88 in './deploy.sh' and re-deploy."
+    exit 1
 
     if [ ! -d "tutorial-resources" ]; then
         git clone https://github.com/eclipse-tractusx/tutorial-resources.git
@@ -142,9 +146,6 @@ function deploy_blueprint_mvd {
     cd MinimumViableDataspace/
     git checkout "${MVD_COMMIT}"
 
-    # Cherry pick post-release fix of EDC build
-    git cherry-pick 08cfb3604e8b93981e8205d2c8f416c51c963a6b
-
     # Build MVD container images
 
     ./gradlew build
@@ -157,28 +158,28 @@ function deploy_blueprint_mvd {
 
     aws ecr get-login-password --region "${AWS_REGION}" | docker login --username AWS --password-stdin "${aws_ecr_registry}"
 
-    docker tag issuerservice:0.14.0  "${aws_ecr_registry}/${PROJECT_NAME}-issuerservice:0.14.0"
-    docker tag identity-hub:0.14.0   "${aws_ecr_registry}/${PROJECT_NAME}-identity-hub:0.14.0"
-    docker tag dataplane:0.14.0      "${aws_ecr_registry}/${PROJECT_NAME}-dataplane:0.14.0"
-    docker tag controlplane:0.14.0   "${aws_ecr_registry}/${PROJECT_NAME}-controlplane:0.14.0"
-    docker tag catalog-server:0.14.0 "${aws_ecr_registry}/${PROJECT_NAME}-catalog-server:0.14.0"
+    docker tag issuerservice:0.14.1  "${aws_ecr_registry}/${PROJECT_NAME}-issuerservice:0.14.1"
+    docker tag identity-hub:0.14.1   "${aws_ecr_registry}/${PROJECT_NAME}-identity-hub:0.14.1"
+    docker tag dataplane:0.14.1      "${aws_ecr_registry}/${PROJECT_NAME}-dataplane:0.14.1"
+    docker tag controlplane:0.14.1   "${aws_ecr_registry}/${PROJECT_NAME}-controlplane:0.14.1"
+    docker tag catalog-server:0.14.1 "${aws_ecr_registry}/${PROJECT_NAME}-catalog-server:0.14.1"
 
-    docker push "${aws_ecr_registry}/${PROJECT_NAME}-issuerservice:0.14.0"
-    docker push "${aws_ecr_registry}/${PROJECT_NAME}-identity-hub:0.14.0"
-    docker push "${aws_ecr_registry}/${PROJECT_NAME}-dataplane:0.14.0"
-    docker push "${aws_ecr_registry}/${PROJECT_NAME}-controlplane:0.14.0"
-    docker push "${aws_ecr_registry}/${PROJECT_NAME}-catalog-server:0.14.0"
+    docker push "${aws_ecr_registry}/${PROJECT_NAME}-issuerservice:0.14.1"
+    docker push "${aws_ecr_registry}/${PROJECT_NAME}-identity-hub:0.14.1"
+    docker push "${aws_ecr_registry}/${PROJECT_NAME}-dataplane:0.14.1"
+    docker push "${aws_ecr_registry}/${PROJECT_NAME}-controlplane:0.14.1"
+    docker push "${aws_ecr_registry}/${PROJECT_NAME}-catalog-server:0.14.1"
 
     # Adjust MVD templates
 
     cd deployment/
     grep -rl "\"password\"" ./ | grep -v "terraform" | xargs sed -ie "s|\"password\"|\"${edc_auth_key}\"|g"
 
-    sed -e "s|issuerservice:latest|${aws_ecr_registry}/${PROJECT_NAME}-issuerservice:0.14.0|"   -i modules/issuer/main.tf
-    sed -e "s|identity-hub:latest|${aws_ecr_registry}/${PROJECT_NAME}-identity-hub:0.14.0|"     -i modules/identity-hub/main.tf
-    sed -e "s|dataplane:latest|${aws_ecr_registry}/${PROJECT_NAME}-dataplane:0.14.0|"           -i modules/connector/dataplane.tf
-    sed -e "s|controlplane:latest|${aws_ecr_registry}/${PROJECT_NAME}-controlplane:0.14.0|"     -i modules/connector/controlplane.tf
-    sed -e "s|catalog-server:latest|${aws_ecr_registry}/${PROJECT_NAME}-catalog-server:0.14.0|" -i modules/catalog-server/catalog-server.tf
+    sed -e "s|issuerservice:latest|${aws_ecr_registry}/${PROJECT_NAME}-issuerservice:0.14.1|"   -i modules/issuer/main.tf
+    sed -e "s|identity-hub:latest|${aws_ecr_registry}/${PROJECT_NAME}-identity-hub:0.14.1|"     -i modules/identity-hub/main.tf
+    sed -e "s|dataplane:latest|${aws_ecr_registry}/${PROJECT_NAME}-dataplane:0.14.1|"           -i modules/connector/dataplane.tf
+    sed -e "s|controlplane:latest|${aws_ecr_registry}/${PROJECT_NAME}-controlplane:0.14.1|"     -i modules/connector/controlplane.tf
+    sed -e "s|catalog-server:latest|${aws_ecr_registry}/${PROJECT_NAME}-catalog-server:0.14.1|" -i modules/catalog-server/catalog-server.tf
 
     grep -rl "image_pull_policy" ./ | grep -v "terraform" | xargs sed -i "s|Never|IfNotPresent|"
 
@@ -261,7 +262,7 @@ case "$1" in
         echo -e "  down           Delete Minimum Viable Dataspace on AWS"
         echo
         echo -e "Blueprints:"
-        echo -e "  mxd            Use Tractus-X MXD as deployment blueprint"
+        echo -e "  mxd            Use Tractus-X MXD as deployment blueprint (deprecated)"
         echo -e "  mvd            Use Eclipse MVD as deployment blueprint"
 
         exit 1

@@ -34,10 +34,10 @@ output "s3-bucket-bob_id" {
 # IAM
 
 output "edc_iam-access-key-id" {
-  value = module.iam_user.iam_access_key_id
+  value = module.iam_user.access_key_id
 }
 
 output "edc_iam-access-key-secret" {
-  value     = module.iam_user.iam_access_key_secret
+  value     = module.iam_user.access_key_secret
   sensitive = true
 }
