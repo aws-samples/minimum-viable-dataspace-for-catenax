@@ -98,18 +98,31 @@ terraform destroy --auto-approve && sleep 5 && terraform apply --auto-approve
 
 Redeploying the Tractus-X MXD to the Kubernetes cluster should take less than 5 minutes to complete.
 
-## Backlog
+## VPC Configuration
 
-### MVD
+By default, this project creates a new VPC with all required networking components. However, you can optionally deploy into an existing VPC by providing the `VPC_ID` variable.
 
-* Customize EDC Gradle build to include extensions for Amazon S3 and AWS Secrets Manager
-* Include DataDashboard support for federated catalogs and fix `publicUrl` adjustment for `HttpData-PULL` transfers
+### Using an Existing VPC
 
-### MXD
+To deploy into an existing VPC, set the `VPC_ID` variable:
 
-* Evaluate whether latest Tractus-X MXD code has been fixed
-* Fix conflicts of seed jobs during (repeated) MXD deployment
-* Include decentral [Digital Twin Registry](https://github.com/eclipse-tractusx/tutorial-resources/issues/50) into MVD deployment
+```bash
+# deploy.sh
+VPC_ID="vpc-12345678"
+```
+
+### Requirements for Existing VPC
+
+When using an existing VPC, ensure it meets these requirements:
+
+- **Private Subnets**: At least 2 private subnets tagged with `kubernetes.io/role/internal-elb=1`
+- **Public Subnets**: At least 2 public subnets tagged with `kubernetes.io/role/elb=1`
+- **Availability Zones**: Subnets must be distributed across multiple AZs for high availability
+
+The deployment will automatically:
+- Discover subnets using the required tags
+- Validate that minimum subnet requirements are met
+- Create a database subnet group using the private subnets
 
 ## Security
 

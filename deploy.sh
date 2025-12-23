@@ -11,6 +11,7 @@ NC="\033[0m"
 
 AWS_REGION="eu-central-1"
 PROJECT_NAME="mvd-on-aws"
+VPC_ID=""
 
 # Tractus-X state from 2024-08-13 for MXD
 # TODO migrate to https://github.com/eclipse-tractusx/tractus-x-umbrella
@@ -42,7 +43,7 @@ function create_mvd {
     blueprint="$1"
 
     terraform init
-    terraform apply -auto-approve -var name="${PROJECT_NAME}" -var region="${AWS_REGION}" -var blueprint="${blueprint}"
+    terraform apply -auto-approve -var name="${PROJECT_NAME}" -var region="${AWS_REGION}" -var blueprint="${blueprint}" -var existing_vpc_id="${VPC_ID}"
 
     aws eks update-kubeconfig --region "${AWS_REGION}" --name "${PROJECT_NAME}"
 

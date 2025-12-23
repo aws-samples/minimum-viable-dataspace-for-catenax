@@ -12,3 +12,7 @@ variable "region" {
 variable "blueprint" {
   default = "mvd"
 }
+
+variable "existing_vpc_id" {
+  default = ""
+}

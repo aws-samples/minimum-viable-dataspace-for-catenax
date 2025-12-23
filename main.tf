@@ -15,42 +15,6 @@ resource "random_string" "this" {
   upper   = false
 }
 
-module "vpc" {
-
-  source = "git::https://github.com/terraform-aws-modules/terraform-aws-vpc.git?ref=cf73787bc163944d63a82e0898aee2bc7ade27ca"  # commit hash of version 6.5.1
-
-  name = var.name
-  cidr = local.vpc_cidr
-
-  azs              = local.azs
-  public_subnets   = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k)]
-  private_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 3)]
-  database_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 6)]
-
-  enable_nat_gateway   = true
-  create_igw           = true
-  enable_dns_hostnames = true
-  single_nat_gateway   = true
-
-  # Manage so we can name
-  manage_default_network_acl    = true
-  default_network_acl_tags      = { Name = "${var.name}-default" }
-  manage_default_route_table    = true
-  default_route_table_tags      = { Name = "${var.name}-default" }
-  manage_default_security_group = true
-  default_security_group_tags   = { Name = "${var.name}-default" }
-
-  public_subnet_tags = {
-    "kubernetes.io/role/elb" = 1
-  }
-
-  private_subnet_tags = {
-    "kubernetes.io/role/internal-elb" = 1
-  }
-
-  tags = local.tags
-}
-
 module "eks" {
 
   source = "git::https://github.com/terraform-aws-modules/terraform-aws-eks.git?ref=c41b58277ab3951eca8d11863edf178135ec7654"  # commit hash of version 21.10.1
@@ -59,8 +23,8 @@ module "eks" {
   kubernetes_version     = local.cluster_version
   endpoint_public_access = true
 
-  vpc_id            = module.vpc.vpc_id
-  subnet_ids        = module.vpc.private_subnets
+  vpc_id            = local.vpc_id
+  subnet_ids        = local.private_subnets
   service_ipv4_cidr = local.cluster_service_cidr
 
   addons = {
@@ -224,18 +188,18 @@ module "rds-aurora-alice" {
   master_password_wo          = random_password.alice.result
   master_password_wo_version  = 1
 
-  vpc_id               = module.vpc.vpc_id
-  db_subnet_group_name = module.vpc.database_subnet_group_name
+  vpc_id               = local.vpc_id
+  db_subnet_group_name = local.database_subnet_group_name
 
   security_group_ingress_rules = {
     private-az1 = {
-      cidr_ipv4 = element(module.vpc.private_subnets_cidr_blocks, 0)
+      cidr_ipv4 = element(local.private_subnets_cidr_blocks, 0)
     }
     private-az2 = {
-      cidr_ipv4 = element(module.vpc.private_subnets_cidr_blocks, 1)
+      cidr_ipv4 = element(local.private_subnets_cidr_blocks, 1)
     }
     private-az3 = {
-      cidr_ipv4 = element(module.vpc.private_subnets_cidr_blocks, 2)
+      cidr_ipv4 = element(local.private_subnets_cidr_blocks, 2)
     }
   }
 
@@ -272,18 +236,18 @@ module "rds-aurora-bob" {
   master_password_wo          = random_password.bob.result
   master_password_wo_version  = 1
 
-  vpc_id               = module.vpc.vpc_id
-  db_subnet_group_name = module.vpc.database_subnet_group_name
+  vpc_id               = local.vpc_id
+  db_subnet_group_name = local.database_subnet_group_name
 
   security_group_ingress_rules = {
     private-az1 = {
-      cidr_ipv4 = element(module.vpc.private_subnets_cidr_blocks, 0)
+      cidr_ipv4 = element(local.private_subnets_cidr_blocks, 0)
     }
     private-az2 = {
-      cidr_ipv4 = element(module.vpc.private_subnets_cidr_blocks, 1)
+      cidr_ipv4 = element(local.private_subnets_cidr_blocks, 1)
     }
     private-az3 = {
-      cidr_ipv4 = element(module.vpc.private_subnets_cidr_blocks, 2)
+      cidr_ipv4 = element(local.private_subnets_cidr_blocks, 2)
     }
   }
 
