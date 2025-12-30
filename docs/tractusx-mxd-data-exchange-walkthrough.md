@@ -1,7 +1,7 @@
 # Tractus-X MXD Data Exchange Walk-Through
 
-[!WARNING]
-This walk-through was created in 2024 to follow along the blog post *[Rapidly experimenting with Catena-X data space technology on AWS](https://aws.amazon.com/blogs/industries/rapidly-experimenting-with-catena-x-data-space-technology-on-aws/)*. The `mxd` blueprint used in this guide has been deprecated since, as the upstream [Tractus-X MXD](https://github.com/eclipse-tractusx/tutorial-resources/tree/main/mxd) is no longer maintained. As a result, this walk-through may no longer work but can still serve as a reference for an EDC data transfer.
+> [!WARNING]
+> This walk-through was created in 2024 to follow along the blog post *[Rapidly experimenting with Catena-X data space technology on AWS](https://aws.amazon.com/blogs/industries/rapidly-experimenting-with-catena-x-data-space-technology-on-aws/)*. The `mxd` blueprint used in this guide has been deprecated since, as the upstream [Tractus-X MXD](https://github.com/eclipse-tractusx/tutorial-resources/tree/main/mxd) is no longer maintained. As a result, this walk-through may no longer work but can still serve as a reference for EDC data transfers.
 
 ## Step 1: Environment Setup
 
