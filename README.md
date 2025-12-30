@@ -15,7 +15,7 @@ This project requires additional dependencies to be installed:
 *Minimum Viable Dataspace on AWS* comes with support for two data space blueprints: [Eclipse MVD](https://github.com/eclipse-edc/MinimumViableDataspace) and [Tractus-X MXD](https://github.com/eclipse-tractusx/tutorial-resources/tree/main/mxd) **(deprecated!)**. By default, the `mvd` blueprint should be used.
 
 > [!NOTE]
-> If you're accessing this repository to follow along the 2024 blog *[Rapidly experimenting with Catena-X data space technology on AWS](https://aws.amazon.com/blogs/industries/rapidly-experimenting-with-catena-x-data-space-technology-on-aws/)*, make sure to review the warning in [Tractus-X MXD Data Exchange Walk-Through](https://github.com/aws-samples/minimum-viable-dataspace-for-catenax/blob/main/docs/tractusx-mxd-data-exchange-walkthrough.md) upfront.
+> If you're accessing this repository to follow along the 2024 blog *[Rapidly experimenting with Catena-X data space technology on AWS](https://aws.amazon.com/blogs/industries/rapidly-experimenting-with-catena-x-data-space-technology-on-aws/)*, make sure to review the warning in [Tractus-X MXD Data Exchange Walk-Through](https://github.com/aws-samples/minimum-viable-dataspace-for-catenax/blob/main/docs/tractusx-mxd-data-exchange-walkthrough.md).
 
 ```bash
 ~ ./deploy.sh up mvd
@@ -25,7 +25,7 @@ Please enter an alphanumeric string to protect access to your connector APIs.
 EDC authentication key:
 ```
 
-Enter a secret key that you would like to configure for access to EDC APIs. Deployment takes 15-20 minutes to complete.
+Enter a secret key that you would like to configure for access to EDC APIs. Deployment takes 15-20 minutes. ☕
 
 ```bash
 ~ kubectl get pod
